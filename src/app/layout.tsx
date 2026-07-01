@@ -7,7 +7,7 @@ import { MainLayoutClient } from "@/components/layout/MainLayoutClient";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "KostMan - Manajemen Kost",
+  title: "Kontrakan Pa Iman",
   description: "Aplikasi manajemen kost berbasis web untuk pemilik kost.",
 };
 

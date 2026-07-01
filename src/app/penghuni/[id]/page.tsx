@@ -1,16 +1,17 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import { usePenghuni } from "@/hooks/usePenghuni";
 import { useKamar } from "@/hooks/useKamar";
 import { usePembayaran } from "@/hooks/usePembayaran";
 import { formatDate, formatRupiah } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Phone, Mail, CreditCard, CalendarDays } from "lucide-react";
+import { ArrowLeft, User, Phone, Mail, CreditCard, CalendarDays, Filter } from "lucide-react";
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function PenghuniDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -22,6 +23,9 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
 
   const penghuni = getPenghuniById(id);
   
+  const currentYear = new Date().getFullYear().toString();
+  const [filterTahun, setFilterTahun] = useState<string>(currentYear);
+
   if (!penghuni) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
@@ -34,7 +38,16 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
   }
 
   const kamar = getKamarById(penghuni.kamarId);
-  const riwayatPembayaran = dataPembayaran.filter(p => p.penghuniId === id);
+  const allRiwayat = dataPembayaran.filter(p => p.penghuniId === id);
+  
+  const availableYears = Array.from(
+    new Set([currentYear, ...allRiwayat.map(p => p.tahun.toString())])
+  ).sort((a, b) => parseInt(b) - parseInt(a));
+
+  const riwayatPembayaran = allRiwayat.filter(p => {
+    if (filterTahun !== "semua" && p.tahun.toString() !== filterTahun) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -113,8 +126,25 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
           </Card>
 
           <Card className="border-border shadow-sm">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle>Riwayat Pembayaran</CardTitle>
+              <div className="flex items-center gap-2 max-w-[150px]">
+                <Filter className="h-4 w-4 text-muted-foreground hidden sm:block" />
+                <Select 
+                  value={filterTahun} 
+                  onValueChange={setFilterTahun}
+                >
+                  <SelectTrigger className="bg-background border-border h-8 text-xs">
+                    <SelectValue placeholder="Tahun" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="semua">Semua</SelectItem>
+                    {availableYears.map(year => (
+                      <SelectItem key={year} value={year}>{year}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
             <CardContent>
               {riwayatPembayaran.length > 0 ? (
@@ -145,7 +175,7 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
                   </TableBody>
                 </Table>
               ) : (
-                <div className="text-center py-6 text-muted-foreground">Belum ada riwayat pembayaran</div>
+                <div className="text-center py-6 text-muted-foreground">Belum ada riwayat pembayaran di tahun ini</div>
               )}
             </CardContent>
           </Card>

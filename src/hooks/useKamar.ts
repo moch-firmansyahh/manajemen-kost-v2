@@ -47,6 +47,7 @@ export const useKamar = () => {
   const [dataKamar, setDataKamar] = useState<Kamar[]>(globalDataKamar);
 
   useEffect(() => {
+    setDataKamar([...globalDataKamar]);
     listeners.push(setDataKamar);
     return () => {
       listeners = listeners.filter(l => l !== setDataKamar);

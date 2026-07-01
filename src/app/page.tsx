@@ -19,12 +19,19 @@ export default function Dashboard() {
   const kamarTerisi = dataKamar.filter(k => k.status === "terisi").length;
   const kamarKosong = dataKamar.filter(k => k.status === "tersedia").length;
   
-  const currentMonth = "Januari"; // Mock for current month
+  const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  const currentMonthIndex = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  
   const pendapatanBulanIni = dataPembayaran
-    .filter(p => p.bulan === currentMonth && p.status === "lunas")
+    .filter(p => {
+      if (p.status !== "lunas" || !p.tanggalBayar) return false;
+      const tglBayar = new Date(p.tanggalBayar);
+      return tglBayar.getMonth() === currentMonthIndex && tglBayar.getFullYear() === currentYear;
+    })
     .reduce((acc, curr) => acc + curr.jumlah, 0);
 
-  const unpaidPembayaran = dataPembayaran.filter(p => p.status === "belum_bayar" || p.status === "terlambat");
+  const unpaidPembayaran = dataPembayaran.filter(p => p.status === "terlambat");
 
   const now = new Date();
   const oneMonthAgo = new Date();
@@ -45,25 +52,21 @@ export default function Dashboard() {
         <StatCard 
           title="Total Kamar" 
           value={totalKamar} 
-          icon={BedDouble} 
           colorClass="bg-gradient-to-tr from-blue-500 to-blue-600"
         />
         <StatCard 
           title="Kamar Terisi" 
           value={kamarTerisi} 
-          icon={Users} 
           colorClass="bg-gradient-to-tr from-emerald-400 to-emerald-500"
         />
         <StatCard 
           title="Kamar Kosong" 
           value={kamarKosong} 
-          icon={AlertCircle} 
           colorClass="bg-gradient-to-tr from-amber-400 to-amber-500"
         />
         <StatCard 
           title="Pendapatan Bulan Ini" 
           value={formatRupiah(pendapatanBulanIni)} 
-          icon={Wallet} 
           colorClass="bg-gradient-to-tr from-indigo-500 to-indigo-600"
         />
       </div>

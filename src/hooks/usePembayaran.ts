@@ -28,7 +28,8 @@ export const autoGenerateTagihan = () => {
     const masukDate = new Date(penghuni.tanggalMasuk);
     const dueDay = masukDate.getDate(); // Jatuh tempo = tanggal masuk
     
-    let currDate = new Date(masukDate.getFullYear(), masukDate.getMonth(), 1);
+    // Mulai tagihan otomatis 1 bulan setelah tanggal masuk
+    let currDate = new Date(masukDate.getFullYear(), masukDate.getMonth() + 1, 1);
     
     // Target = bulan depan (supaya tagihan bulan depan sudah muncul)
     const targetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
@@ -85,6 +86,7 @@ export const usePembayaran = () => {
   const [dataPembayaran, setDataPembayaran] = useState<Pembayaran[]>(globalDataPembayaran);
 
   useEffect(() => {
+    setDataPembayaran([...globalDataPembayaran]);
     listeners.push(setDataPembayaran);
     return () => {
       listeners = listeners.filter(l => l !== setDataPembayaran);
@@ -110,11 +112,16 @@ export const usePembayaran = () => {
     notifyListeners(globalDataPembayaran.filter(p => p.id !== id));
   };
 
+  const deletePembayaranByPenghuniId = (penghuniId: string) => {
+    notifyListeners(globalDataPembayaran.filter(p => p.penghuniId !== penghuniId));
+  };
+
   return {
     dataPembayaran,
     getPembayaranById,
     addPembayaran,
     updatePembayaran,
     deletePembayaran,
+    deletePembayaranByPenghuniId,
   };
 };

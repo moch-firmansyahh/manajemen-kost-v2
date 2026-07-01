@@ -5,7 +5,7 @@ import { formatDate } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye, Edit, Trash2 } from "lucide-react";
+import { Eye, Edit, Trash2, LogOut } from "lucide-react";
 import Link from "next/link";
 
 interface PenghuniTableProps {
@@ -13,9 +13,10 @@ interface PenghuniTableProps {
   dataKamar: Kamar[];
   onEdit: (penghuni: Penghuni) => void;
   onDelete: (id: string) => void;
+  onCheckout?: (id: string) => void;
 }
 
-export const PenghuniTable = ({ data, dataKamar, onEdit, onDelete }: PenghuniTableProps) => {
+export const PenghuniTable = ({ data, dataKamar, onEdit, onDelete, onCheckout }: PenghuniTableProps) => {
   if (data.length === 0) {
     return <div className="text-center py-10 text-muted-foreground bg-card rounded-xl border border-border shadow-sm">Belum ada data penghuni</div>;
   }
@@ -50,10 +51,15 @@ export const PenghuniTable = ({ data, dataKamar, onEdit, onDelete }: PenghuniTab
                       : "bg-muted text-muted-foreground border-border"
                     }
                   >
-                    {isAktif ? "Aktif" : "Tidak Aktif"}
+                    {isAktif ? "Aktif" : "Sudah Keluar"}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
+                  {isAktif && onCheckout && (
+                    <Button variant="ghost" size="icon" onClick={() => onCheckout(penghuni.id)} className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-900/50" title="Checkout Penghuni">
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Button variant="ghost" size="icon" asChild className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/50">
                     <Link href={`/penghuni/${penghuni.id}`} prefetch={true}>
                       <Eye className="h-4 w-4" />
@@ -62,7 +68,7 @@ export const PenghuniTable = ({ data, dataKamar, onEdit, onDelete }: PenghuniTab
                   <Button variant="ghost" size="icon" onClick={() => onEdit(penghuni)} className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/50">
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => onDelete(penghuni.id)} className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/50">
+                  <Button variant="ghost" size="icon" onClick={() => onDelete(penghuni.id)} className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/50" title="Hapus Permanen">
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </TableCell>

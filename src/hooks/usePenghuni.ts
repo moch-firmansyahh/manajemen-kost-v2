@@ -27,6 +27,7 @@ export const usePenghuni = () => {
   const [dataPenghuni, setDataPenghuni] = useState<Penghuni[]>(globalDataPenghuni);
 
   useEffect(() => {
+    setDataPenghuni([...globalDataPenghuni]);
     listeners.push(setDataPenghuni);
     return () => {
       listeners = listeners.filter(l => l !== setDataPenghuni);

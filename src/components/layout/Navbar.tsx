@@ -26,7 +26,11 @@ export const Navbar = ({ toggleSidebar }: NavbarProps) => {
   const { dataPembayaran } = usePembayaran();
   const { dataPenghuni } = usePenghuni();
 
-  const latePembayaran = dataPembayaran.filter(p => p.status === 'terlambat');
+  const latePembayaran = dataPembayaran.filter(p => {
+    if (p.status !== 'terlambat') return false;
+    const penghuni = dataPenghuni.find(pen => pen.id === p.penghuniId);
+    return penghuni && !penghuni.tanggalKeluar;
+  });
 
   useEffect(() => {
     setMounted(true);
