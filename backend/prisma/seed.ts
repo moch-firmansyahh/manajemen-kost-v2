@@ -11,6 +11,15 @@ async function main() {
   const fasilitasA = ["AC", "WiFi", "Kamar Mandi Dalam", "Kasur Springbed", "Lemari", "Meja Belajar"];
   const fasilitasB = ["Kipas Angin", "WiFi", "Kamar Mandi Luar", "Kasur Busa", "Lemari"];
 
+  console.log("Seeding Admin...");
+  await prisma.admin.deleteMany({});
+  await prisma.admin.create({
+    data: {
+      email: 'firmanajah366@gmail.com',
+      password: 'Iman12345'
+    }
+  });
+
   console.log("Seeding Kamar...");
   const kamarA1 = await prisma.kamar.create({
     data: { nomorKamar: 'A1', lantai: 1, tipe: 'VIP', hargaPerBulan: 1500000, fasilitas: fasilitasA, status: 'terisi' }

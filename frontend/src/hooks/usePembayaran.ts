@@ -15,6 +15,17 @@ const notifyListeners = (data: Pembayaran[]) => {
   listeners.forEach(listener => listener(data));
 };
 
+export const refetchPembayaranData = async () => {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    isFetched = true;
+    notifyListeners(data);
+  } catch (e) {
+    console.error("Failed to fetch pembayaran", e);
+  }
+};
+
 export const usePembayaran = () => {
   const [dataPembayaran, setDataPembayaran] = useState<Pembayaran[]>(globalDataPembayaran);
   const [isLoading, setIsLoading] = useState<boolean>(globalIsLoading);
@@ -23,15 +34,7 @@ export const usePembayaran = () => {
     listeners.push(setDataPembayaran);
     
     if (!isFetched) {
-      setIsLoading(true);
-      fetch(API_URL)
-        .then(res => res.json())
-        .then((data) => {
-          isFetched = true;
-          notifyListeners(data);
-          setIsLoading(false);
-        })
-        .catch(() => setIsLoading(false));
+      refetchPembayaranData();
     } else {
       setIsLoading(false);
     }

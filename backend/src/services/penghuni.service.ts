@@ -7,6 +7,9 @@ export const getPenghuni = async () => {
 };
 
 export const createPenghuni = async (data: any) => {
+  const kamar = await prisma.kamar.findUnique({ where: { id: data.kamarId } });
+  const harga = kamar ? kamar.hargaPerBulan : 0;
+
   const newPenghuni = await prisma.penghuni.create({
     data: {
       nama: data.nama,
@@ -22,6 +25,22 @@ export const createPenghuni = async (data: any) => {
   await prisma.kamar.update({
     where: { id: data.kamarId },
     data: { status: 'terisi' },
+  });
+
+  const currentYear = new Date().getFullYear();
+  const currentMonthIndex = new Date().getMonth();
+  const bulanArray = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  const currentMonthName = bulanArray[currentMonthIndex];
+
+  await prisma.pembayaran.create({
+    data: {
+      penghuniId: newPenghuni.id,
+      kamarId: newPenghuni.kamarId,
+      bulan: currentMonthName,
+      tahun: currentYear,
+      jumlah: harga,
+      status: 'belum_bayar'
+    }
   });
 
   return newPenghuni;

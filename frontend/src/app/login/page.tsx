@@ -6,29 +6,52 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
+import { useTransitionContext } from "@/components/RouteTransitionProvider";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { startTransition } = useTransitionContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    if (email !== "firmanajah366@gmail.com") {
-      setError("Email belum terdaftar. Gunakan firmanajah366@gmail.com");
-      return;
-    }
-
     setIsLoading(true);
-    setTimeout(() => {
+
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login gagal');
+      }
+
+      // Login berhasil, simpan sesi
       sessionStorage.setItem("isAuth", "true");
-      router.push("/");
-    }, 800);
+      
+      // Munculkan loading screen animasi rumah
+      startTransition();
+
+      // Jeda 50ms untuk memberi waktu animasi render di layar sebelum pindah route
+      setTimeout(() => {
+        router.push("/");
+      }, 50);
+      
+    } catch (err: any) {
+      setError(err.message);
+      setIsLoading(false);
+    }
   };
 
   return (

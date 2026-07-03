@@ -30,10 +30,17 @@ export default function PembayaranPage() {
   ).sort((a, b) => parseInt(b) - parseInt(a));
 
   const filteredData = dataPembayaran.filter(p => {
-    // 1. Sembunyikan riwayat pembayaran penghuni yang sudah keluar
+    // 1. Logika filter penghuni keluar
     const penghuni = dataPenghuni.find(pengh => pengh.id === p.penghuniId);
     const isAktif = penghuni && !penghuni.tanggalKeluar;
-    if (!isAktif) return false;
+    
+    if (!isAktif) {
+      // Jika penghuni sudah keluar, HANYA sembunyikan tagihan yang sudah Lunas.
+      // Jika tagihan masih Belum Bayar atau Terlambat, TETAP tampilkan.
+      if (p.status === "lunas") {
+        return false;
+      }
+    }
     
     // 2. Filter berdasarkan Tahun agar tidak terlalu panjang/melebar
     if (filterTahun !== "semua" && p.tahun.toString() !== filterTahun) return false;

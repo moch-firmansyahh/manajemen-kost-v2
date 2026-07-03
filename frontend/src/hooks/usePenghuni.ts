@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Penghuni } from '@/types';
+import { refetchPembayaranData } from './usePembayaran';
 
 const API_URL = 'http://localhost:5000/api/penghuni';
 
@@ -50,6 +51,7 @@ export const usePenghuni = () => {
     });
     const newPenghuni = await res.json();
     notifyListeners([...globalDataPenghuni, newPenghuni]);
+    await refetchPembayaranData(); // Fetch the newly auto-generated Pembayaran
   };
 
   const updatePenghuni = async (id: string, updatedData: Partial<Penghuni>) => {

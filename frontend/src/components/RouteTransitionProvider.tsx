@@ -19,14 +19,23 @@ export function useTransitionContext() {
 }
 
 export function RouteTransitionProvider({ children }: { children: React.ReactNode }) {
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  // Aktifkan secara default agar muncul saat pertama kali aplikasi dimuat (F5)
+  const [isTransitioning, setIsTransitioning] = useState(true);
+
+  // Menangani penayangan saat initial mount
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsTransitioning(false);
+    }, 1500); // Garansi 1.5 detik
+    return () => clearTimeout(timeout);
+  }, []);
 
   const startTransition = () => {
     setIsTransitioning(true);
-    // Waktu tunggu disesuaikan dengan durasi animasi yang lebih santai (1.1s total animasi, kita set timeout 1000ms - 1200ms)
+    // Waktu tunggu disesuaikan agar garansi animasi selesai
     setTimeout(() => {
       setIsTransitioning(false);
-    }, 1200);
+    }, 1500);
   };
 
   return (

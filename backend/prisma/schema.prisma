@@ -55,3 +55,10 @@ model Pembayaran {
   penghuni     Penghuni  @relation(fields: [penghuniId], references: [id])
   kamar        Kamar     @relation(fields: [kamarId], references: [id])
 }
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}

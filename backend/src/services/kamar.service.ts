@@ -1,8 +1,10 @@
 import prisma from '../prisma';
 
 export const getKamar = async () => {
-  return await prisma.kamar.findMany({
-    orderBy: { createdAt: 'desc' },
+  const data = await prisma.kamar.findMany();
+  // Natural sort (mengurutkan A1, A2... A10 dengan benar)
+  return data.sort((a, b) => {
+    return a.nomorKamar.localeCompare(b.nomorKamar, undefined, { numeric: true, sensitivity: 'base' });
   });
 };
 
