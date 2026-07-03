@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { KamarBadge } from "./KamarBadge";
 import { Button } from "@/components/ui/button";
 import { Eye, Edit, Trash2 } from "lucide-react";
-import { TransitionLink as Link } from "@/components/ui/TransitionLink";
+import Link from "next/link";
 
 interface KamarTableProps {
   data: Kamar[];

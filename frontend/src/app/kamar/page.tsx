@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useKamar } from "@/hooks/useKamar";
 import { KamarTable } from "@/components/kamar/KamarTable";
-import { KamarForm } from "@/components/kamar/KamarForm";
+import dynamic from "next/dynamic";
+const KamarForm = dynamic(() => import("@/components/kamar/KamarForm").then(mod => mod.KamarForm), { ssr: false });
 import { Button } from "@/components/ui/button";
 import { Plus, Filter } from "lucide-react";
 import { Kamar, StatusKamar } from "@/types";
@@ -13,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function KamarPage() {
   const { dataKamar, isLoading, addKamar, updateKamar, deleteKamar } = useKamar();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [hasMountedForm, setHasMountedForm] = useState(false);
   const [editingData, setEditingData] = useState<Kamar | null>(null);
   const [filterStatus, setFilterStatus] = useState<StatusKamar | "semua">("semua");
 
@@ -22,6 +24,7 @@ export default function KamarPage() {
 
   const handleEdit = (kamar: Kamar) => {
     setEditingData(kamar);
+    setHasMountedForm(true);
     setIsFormOpen(true);
   };
 
@@ -45,7 +48,10 @@ export default function KamarPage() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Kamar</h1>
         </div>
         <Button 
-          onClick={() => setIsFormOpen(true)}
+          onClick={() => {
+            setHasMountedForm(true);
+            setIsFormOpen(true);
+          }}
           className="bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -86,12 +92,14 @@ export default function KamarPage() {
         />
       )}
 
-      <KamarForm
-        isOpen={isFormOpen}
-        onClose={handleCloseForm}
-        onSubmit={handleSubmit}
-        initialData={editingData}
-      />
+      {hasMountedForm && (
+        <KamarForm
+          isOpen={isFormOpen}
+          onClose={handleCloseForm}
+          onSubmit={handleSubmit}
+          initialData={editingData}
+        />
+      )}
     </div>
   );
 }

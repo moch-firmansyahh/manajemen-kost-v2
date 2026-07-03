@@ -43,10 +43,11 @@ export default function LoginPage() {
       // Munculkan loading screen animasi rumah
       startTransition();
 
-      // Jeda 50ms untuk memberi waktu animasi render di layar sebelum pindah route
+      // Jeda 1200ms untuk memastikan animasi rumah (1.1s) sudah selesai digambar mulus 
+      // sebelum Next.js memblokir memori utama untuk memuat halaman dashboard.
       setTimeout(() => {
         router.push("/");
-      }, 50);
+      }, 1200);
       
     } catch (err: any) {
       setError(err.message);

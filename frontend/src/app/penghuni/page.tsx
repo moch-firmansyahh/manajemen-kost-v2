@@ -5,7 +5,8 @@ import { usePenghuni } from "@/hooks/usePenghuni";
 import { useKamar } from "@/hooks/useKamar";
 import { autoGenerateTagihan, usePembayaran } from "@/hooks/usePembayaran";
 import { PenghuniTable } from "@/components/penghuni/PenghuniTable";
-import { PenghuniForm } from "@/components/penghuni/PenghuniForm";
+import dynamic from "next/dynamic";
+const PenghuniForm = dynamic(() => import("@/components/penghuni/PenghuniForm").then(mod => mod.PenghuniForm), { ssr: false });
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search } from "lucide-react";
@@ -18,6 +19,7 @@ export default function PenghuniPage() {
   const { dataKamar, updateKamar } = useKamar();
   
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [hasMountedForm, setHasMountedForm] = useState(false);
   const [editingData, setEditingData] = useState<Penghuni | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"aktif" | "alumni">("aktif");
@@ -30,6 +32,7 @@ export default function PenghuniPage() {
 
   const handleEdit = (penghuni: Penghuni) => {
     setEditingData(penghuni);
+    setHasMountedForm(true);
     setIsFormOpen(true);
   };
 
@@ -86,7 +89,10 @@ export default function PenghuniPage() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Penghuni</h1>
         </div>
         <Button 
-          onClick={() => setIsFormOpen(true)}
+          onClick={() => {
+            setHasMountedForm(true);
+            setIsFormOpen(true);
+          }}
           className="bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -140,13 +146,15 @@ export default function PenghuniPage() {
         />
       )}
 
-      <PenghuniForm
-        isOpen={isFormOpen}
-        onClose={handleCloseForm}
-        onSubmit={handleSubmit}
-        initialData={editingData}
-        dataKamar={dataKamar}
-      />
+      {hasMountedForm && (
+        <PenghuniForm
+          isOpen={isFormOpen}
+          onClose={handleCloseForm}
+          onSubmit={handleSubmit}
+          initialData={editingData}
+          dataKamar={dataKamar}
+        />
+      )}
     </div>
   );
 }

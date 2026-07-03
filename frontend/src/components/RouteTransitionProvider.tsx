@@ -1,11 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { createContext, useContext, useState, useRef, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import HouseLoader from "@/components/ui/HouseLoader";
 
 type TransitionContextType = {
   startTransition: () => void;
+  stopTransition: () => void;
 };
 
 const TransitionContext = createContext<TransitionContextType | undefined>(undefined);
@@ -21,38 +22,66 @@ export function useTransitionContext() {
 export function RouteTransitionProvider({ children }: { children: React.ReactNode }) {
   // Aktifkan secara default agar muncul saat pertama kali aplikasi dimuat (F5)
   const [isTransitioning, setIsTransitioning] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isInitialMount, setIsInitialMount] = useState(true);
+  const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const pathname = usePathname();
 
   // Menangani penayangan saat initial mount
   React.useEffect(() => {
     const timeout = setTimeout(() => {
-      setIsTransitioning(false);
-    }, 1500); // Garansi 1.5 detik
+      // Mulai fade out
+      setIsVisible(false);
+      // Setelah animasi fade out selesai (300ms), benar-benar unmount
+      setTimeout(() => {
+        setIsTransitioning(false);
+        setIsInitialMount(false);
+      }, 300);
+    }, 1500); // Garansi 1.5 detik F5
     return () => clearTimeout(timeout);
   }, []);
 
-  const startTransition = () => {
+  // Mematikan loading screen HANYA JIKA halaman benar-benar sudah selesai berpindah
+  React.useEffect(() => {
+    if (!isInitialMount) {
+      // Fade out dulu, lalu unmount
+      setIsVisible(false);
+      if (fadeOutTimerRef.current) clearTimeout(fadeOutTimerRef.current);
+      fadeOutTimerRef.current = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+    }
+  }, [pathname]);
+
+  const startTransition = useCallback(() => {
+    if (fadeOutTimerRef.current) clearTimeout(fadeOutTimerRef.current);
     setIsTransitioning(true);
-    // Waktu tunggu disesuaikan agar garansi animasi selesai
-    setTimeout(() => {
+    setIsVisible(true);
+  }, []);
+
+  const stopTransition = useCallback(() => {
+    setIsVisible(false);
+    fadeOutTimerRef.current = setTimeout(() => {
       setIsTransitioning(false);
-    }, 1500);
-  };
+    }, 300);
+  }, []);
 
   return (
-    <TransitionContext.Provider value={{ startTransition }}>
-      <AnimatePresence>
-        {isTransitioning && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { duration: 0.1 } }}
-            exit={{ opacity: 0, transition: { duration: 0.3 } }}
-            className="fixed inset-0 z-[100]"
-          >
-            <HouseLoader />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {children}
+    <TransitionContext.Provider value={{ startTransition, stopTransition }}>
+      {isTransitioning && (
+        <div
+          className="fixed inset-0 z-[100]"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "opacity 300ms ease-out",
+            pointerEvents: isVisible ? "auto" : "none",
+          }}
+        >
+          <HouseLoader />
+        </div>
+      )}
+      {(isInitialMount && isTransitioning) ? null : children}
     </TransitionContext.Provider>
   );
 }

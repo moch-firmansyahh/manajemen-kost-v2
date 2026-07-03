@@ -34,7 +34,10 @@ export const usePembayaran = () => {
     listeners.push(setDataPembayaran);
     
     if (!isFetched) {
-      refetchPembayaranData();
+      setIsLoading(true);
+      refetchPembayaranData().then(() => {
+        setIsLoading(false);
+      });
     } else {
       setIsLoading(false);
     }

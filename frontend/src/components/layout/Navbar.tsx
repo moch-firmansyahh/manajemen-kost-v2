@@ -29,7 +29,7 @@ export const Navbar = ({ toggleSidebar }: NavbarProps) => {
   const latePembayaran = dataPembayaran.filter(p => {
     if (p.status !== 'terlambat') return false;
     const penghuni = dataPenghuni.find(pen => pen.id === p.penghuniId);
-    return penghuni && !penghuni.tanggalKeluar;
+    return !!penghuni; // Selama penghuninya valid, tampilkan notifikasi (meskipun sudah keluar)
   });
 
   useEffect(() => {

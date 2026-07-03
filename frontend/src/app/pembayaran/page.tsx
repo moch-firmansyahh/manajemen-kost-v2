@@ -5,7 +5,8 @@ import { usePembayaran } from "@/hooks/usePembayaran";
 import { usePenghuni } from "@/hooks/usePenghuni";
 import { useKamar } from "@/hooks/useKamar";
 import { PembayaranTable } from "@/components/pembayaran/PembayaranTable";
-import { PembayaranForm } from "@/components/pembayaran/PembayaranForm";
+import dynamic from "next/dynamic";
+const PembayaranForm = dynamic(() => import("@/components/pembayaran/PembayaranForm").then(mod => mod.PembayaranForm), { ssr: false });
 import { Button } from "@/components/ui/button";
 import { Plus, Filter, Calendar } from "lucide-react";
 import { Pembayaran, StatusPembayaran } from "@/types";
@@ -18,6 +19,7 @@ export default function PembayaranPage() {
   const { dataKamar } = useKamar();
   
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [hasMountedForm, setHasMountedForm] = useState(false);
   const [editingData, setEditingData] = useState<Pembayaran | null>(null);
   const [filterStatus, setFilterStatus] = useState<StatusPembayaran | "semua">("semua");
   
@@ -53,6 +55,7 @@ export default function PembayaranPage() {
 
   const handleEdit = (pembayaran: Pembayaran) => {
     setEditingData(pembayaran);
+    setHasMountedForm(true);
     setIsFormOpen(true);
   };
 
@@ -76,7 +79,10 @@ export default function PembayaranPage() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Pembayaran</h1>
         </div>
         <Button 
-          onClick={() => setIsFormOpen(true)}
+          onClick={() => {
+            setHasMountedForm(true);
+            setIsFormOpen(true);
+          }}
           className="bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -139,14 +145,16 @@ export default function PembayaranPage() {
         />
       )}
 
-      <PembayaranForm
-        isOpen={isFormOpen}
-        onClose={handleCloseForm}
-        onSubmit={handleSubmit}
-        initialData={editingData}
-        dataPenghuni={dataPenghuni}
-        dataKamar={dataKamar}
-      />
+      {hasMountedForm && (
+        <PembayaranForm
+          isOpen={isFormOpen}
+          onClose={handleCloseForm}
+          onSubmit={handleSubmit}
+          initialData={editingData}
+          dataPenghuni={dataPenghuni}
+          dataKamar={dataKamar}
+        />
+      )}
     </div>
   );
 }
