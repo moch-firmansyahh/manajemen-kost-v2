@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Kamar {
+  id            String       @id @default(cuid())
+  nomorKamar    String       @unique
+  lantai        Int
+  tipe          String
+  hargaPerBulan Int
+  fasilitas     String[]
+  status        String
+  createdAt     DateTime     @default(now())
+
+  penghuni      Penghuni[]
+  pembayaran    Pembayaran[]
+}
+
+model Penghuni {
+  id            String       @id @default(cuid())
+  nama          String
+  nik           String
+  noTelepon     String
+  email         String
+  kamarId       String
+  tanggalMasuk  String
+  tanggalKeluar String?
+  createdAt     DateTime     @default(now())
+
+  kamar         Kamar        @relation(fields: [kamarId], references: [id])
+  pembayaran    Pembayaran[]
+}
+
+model Pembayaran {
+  id           String    @id @default(cuid())
+  penghuniId   String
+  kamarId      String
+  bulan        String
+  tahun        Int
+  jumlah       Int
+  tanggalBayar String?
+  status       String
+  createdAt    DateTime  @default(now())
+
+  penghuni     Penghuni  @relation(fields: [penghuniId], references: [id])
+  kamar        Kamar     @relation(fields: [kamarId], references: [id])
+}
