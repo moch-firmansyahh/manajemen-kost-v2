@@ -43,7 +43,6 @@ export default function PembayaranDetailPage({ params }: { params: Promise<{ id:
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Detail Pembayaran</h1>
-          <p className="text-muted-foreground mt-1">ID Tagihan: #{pembayaran.id.padStart(6, '0')}</p>
         </div>
       </div>
 

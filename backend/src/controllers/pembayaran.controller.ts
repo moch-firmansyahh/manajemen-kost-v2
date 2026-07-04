@@ -21,7 +21,7 @@ export const createPembayaran = async (req: Request, res: Response) => {
 
 export const updatePembayaran = async (req: Request, res: Response) => {
   try {
-    const updated = await pembayaranService.updatePembayaran(req.params.id, req.body);
+    const updated = await pembayaranService.updatePembayaran(req.params.id as string, req.body);
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update pembayaran' });
@@ -30,7 +30,7 @@ export const updatePembayaran = async (req: Request, res: Response) => {
 
 export const deletePembayaran = async (req: Request, res: Response) => {
   try {
-    await pembayaranService.deletePembayaran(req.params.id);
+    await pembayaranService.deletePembayaran(req.params.id as string);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete pembayaran' });

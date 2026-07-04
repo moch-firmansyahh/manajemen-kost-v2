@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, ArrowLeft, Check, X, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Check, X } from "lucide-react";
 import Link from "next/link";
 
 export default function GantiSandiPage() {
@@ -21,7 +21,6 @@ export default function GantiSandiPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
 
   // Validation rules
@@ -34,7 +33,7 @@ export default function GantiSandiPage() {
   const isValidPassword = hasMinLength && hasUppercase && hasLowercase && hasNumber && hasSymbol;
   const isMatch = newPassword === confirmPassword && newPassword !== "";
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -55,16 +54,23 @@ export default function GantiSandiPage() {
 
     setIsLoading(true);
 
-    // Simulate network request and hashing
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/profile/change-password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal mengubah kata sandi");
+      }
       
-      // Redirect back after 2 seconds
-      setTimeout(() => {
-        router.push("/profile");
-      }, 2000);
-    }, 1500);
+      // Jika berhasil, langsung alihkan ke halaman profile tanpa jeda popup
+      router.push("/profile");
+    } catch (err: any) {
+      setError(err.message);
+      setIsLoading(false);
+    }
   };
 
   const ValidationItem = ({ isValid, text }: { isValid: boolean, text: string }) => (
@@ -91,118 +97,108 @@ export default function GantiSandiPage() {
       <Card className="border-border shadow-sm">
         <CardHeader>
           <CardTitle>Formulir Keamanan</CardTitle>
-          <CardDescription>Kata sandi Anda akan dienkripsi menggunakan metode hashing terkini.</CardDescription>
+          <CardDescription>Kata sandi Anda akan langsung diperbarui secara aman di database.</CardDescription>
         </CardHeader>
         <CardContent>
-          {isSuccess ? (
-            <div className="py-8 flex flex-col items-center justify-center text-center space-y-4 animate-in fade-in zoom-in duration-500">
-              <div className="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-2">
-                <ShieldCheck className="h-8 w-8" />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-destructive/15 text-destructive p-3 rounded-lg text-sm font-medium">
+                {error}
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Sandi Berhasil Diperbarui!</h3>
-              <p className="text-muted-foreground max-w-sm">Kata sandi Anda telah berhasil di-hash dan disimpan dengan aman. Mengalihkan kembali ke profil...</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-destructive/15 text-destructive p-3 rounded-lg text-sm font-medium">
-                  {error}
-                </div>
-              )}
+            )}
 
-              {/* Current Password */}
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">Kata Sandi Saat Ini</Label>
-                <div className="relative">
-                  <Input 
-                    id="currentPassword" 
-                    type={showCurrent ? "text" : "password"} 
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="pr-10"
-                    placeholder="Masukkan sandi saat ini"
-                  />
-                  <button 
-                    type="button"
-                    onClick={() => setShowCurrent(!showCurrent)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* New Passwords */}
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="newPassword">Kata Sandi Baru</Label>
-                    <div className="relative">
-                      <Input 
-                        id="newPassword" 
-                        type={showNew ? "text" : "password"} 
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="pr-10"
-                        placeholder="Sandi baru"
-                      />
-                      <button 
-                        type="button"
-                        onClick={() => setShowNew(!showNew)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      >
-                        {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Konfirmasi Kata Sandi Baru</Label>
-                    <div className="relative">
-                      <Input 
-                        id="confirmPassword" 
-                        type={showConfirm ? "text" : "password"} 
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="pr-10"
-                        placeholder="Ulangi sandi baru"
-                      />
-                      <button 
-                        type="button"
-                        onClick={() => setShowConfirm(!showConfirm)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      >
-                        {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Validation Criteria */}
-                <div className="bg-muted/50 rounded-xl p-4 space-y-3">
-                  <h4 className="text-sm font-semibold text-foreground mb-3">Kriteria Keamanan:</h4>
-                  <ValidationItem isValid={hasMinLength} text="Minimal 8 karakter" />
-                  <ValidationItem isValid={hasUppercase} text="Ada huruf kapital (A-Z)" />
-                  <ValidationItem isValid={hasLowercase} text="Ada huruf kecil (a-z)" />
-                  <ValidationItem isValid={hasNumber} text="Ada angka (0-9)" />
-                  <ValidationItem isValid={hasSymbol} text="Ada simbol khusus (!@#...)" />
-                  <div className="pt-2 border-t border-border mt-2">
-                    <ValidationItem isValid={isMatch} text="Konfirmasi sandi cocok" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-border">
-                <Button 
-                  type="submit" 
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                  disabled={isLoading || !isValidPassword || !isMatch || !currentPassword}
+            {/* Current Password */}
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword">Kata Sandi Saat Ini</Label>
+              <div className="relative">
+                <Input 
+                  id="currentPassword" 
+                  type={showCurrent ? "text" : "password"} 
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="pr-10 h-11"
+                  placeholder="Masukkan sandi saat ini"
+                />
+                <button 
+                  type="button"
+                  onClick={() => setShowCurrent(!showCurrent)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {isLoading ? "Memproses Hashing..." : "Simpan & Enkripsi Sandi"}
-                </Button>
+                  {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-            </form>
-          )}
+            </div>
+
+            <div className="pt-4 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* New Passwords */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">Kata Sandi Baru</Label>
+                  <div className="relative">
+                    <Input 
+                      id="newPassword" 
+                      type={showNew ? "text" : "password"} 
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="pr-10 h-11"
+                      placeholder="Sandi baru"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowNew(!showNew)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Konfirmasi Kata Sandi Baru</Label>
+                  <div className="relative">
+                    <Input 
+                      id="confirmPassword" 
+                      type={showConfirm ? "text" : "password"} 
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="pr-10 h-11"
+                      placeholder="Ulangi sandi baru"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowConfirm(!showConfirm)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Validation Criteria */}
+              <div className="bg-muted/50 rounded-xl p-4 space-y-3">
+                <h4 className="text-sm font-semibold text-foreground mb-3">Kriteria Keamanan:</h4>
+                <ValidationItem isValid={hasMinLength} text="Minimal 8 karakter" />
+                <ValidationItem isValid={hasUppercase} text="Ada huruf kapital (A-Z)" />
+                <ValidationItem isValid={hasLowercase} text="Ada huruf kecil (a-z)" />
+                <ValidationItem isValid={hasNumber} text="Ada angka (0-9)" />
+                <ValidationItem isValid={hasSymbol} text="Ada simbol khusus (!@#...)" />
+                <div className="pt-2 border-t border-border mt-2">
+                  <ValidationItem isValid={isMatch} text="Konfirmasi sandi cocok" />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-border">
+              <Button 
+                type="submit" 
+                className="w-full bg-[#567134] hover:bg-[#455b2a] text-white h-11 rounded-lg font-medium transition-colors"
+                disabled={isLoading || !isValidPassword || !isMatch || !currentPassword}
+              >
+                {isLoading ? "Memproses..." : "Simpan & Perbarui Sandi"}
+              </Button>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>

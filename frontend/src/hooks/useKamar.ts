@@ -8,10 +8,27 @@ let listeners: React.Dispatch<React.SetStateAction<Kamar[]>>[] = [];
 let isFetched = false;
 let globalIsLoading = true;
 
+const sortKamarList = (list: Kamar[]) => {
+  return [...list].sort((a, b) => {
+    return a.nomorKamar.localeCompare(b.nomorKamar, undefined, { numeric: true, sensitivity: 'base' });
+  });
+};
+
 const notifyListeners = (data: Kamar[]) => {
-  globalDataKamar = data;
+  globalDataKamar = sortKamarList(data);
   globalIsLoading = false;
-  listeners.forEach(listener => listener(data));
+  listeners.forEach(listener => listener(globalDataKamar));
+};
+
+export const refetchKamarData = async () => {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    isFetched = true;
+    notifyListeners(data);
+  } catch (e) {
+    console.error("Failed to fetch kamar", e);
+  }
 };
 
 export const useKamar = () => {

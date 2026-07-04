@@ -84,10 +84,6 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
               <span>{penghuni.noTelepon}</span>
             </div>
             <div className="flex items-center text-sm text-foreground">
-              <Mail className="h-4 w-4 mr-3 text-muted-foreground" />
-              <span>{penghuni.email}</span>
-            </div>
-            <div className="flex items-center text-sm text-foreground">
               <CalendarDays className="h-4 w-4 mr-3 text-muted-foreground" />
               <span>Masuk: <span className="font-medium">{formatDate(penghuni.tanggalMasuk)}</span></span>
             </div>

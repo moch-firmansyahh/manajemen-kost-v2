@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,17 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("savedEmail");
+    if (saved) {
+      setEmail(saved);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +48,13 @@ export default function LoginPage() {
 
       // Login berhasil, simpan sesi
       sessionStorage.setItem("isAuth", "true");
+      if (rememberMe) {
+        localStorage.setItem("isAuth", "true");
+        localStorage.setItem("savedEmail", email);
+      } else {
+        localStorage.removeItem("isAuth");
+        localStorage.removeItem("savedEmail");
+      }
       
       // Munculkan loading screen animasi rumah
       startTransition();
@@ -107,6 +123,19 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+              </div>
+
+              <div className="flex items-center space-x-2 pt-0.5">
+                <input 
+                  type="checkbox" 
+                  id="rememberMe" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 rounded border-zinc-200 text-zinc-950 focus:ring-zinc-950 dark:border-border dark:bg-zinc-900 accent-[#567134] cursor-pointer"
+                />
+                <Label htmlFor="rememberMe" className="text-zinc-600 dark:text-zinc-400 text-xs cursor-pointer select-none">
+                  Ingat Saya
+                </Label>
               </div>
 
               {error && (

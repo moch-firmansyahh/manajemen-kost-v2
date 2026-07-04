@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PenghuniPage() {
   const { dataPenghuni, isLoading, addPenghuni, updatePenghuni, deletePenghuni } = usePenghuni();
-  const { dataKamar, updateKamar } = useKamar();
+  const { dataKamar } = useKamar();
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [hasMountedForm, setHasMountedForm] = useState(false);
@@ -45,28 +45,14 @@ export default function PenghuniPage() {
     const penghuni = dataPenghuni.find(p => p.id === id);
     if (penghuni && !penghuni.tanggalKeluar) {
       updatePenghuni(id, { tanggalKeluar: new Date().toISOString() });
-      updateKamar(penghuni.kamarId, { status: "tersedia" });
     }
   };
 
   const handleSubmit = (data: Omit<Penghuni, "id" | "createdAt">) => {
     if (editingData) {
       updatePenghuni(editingData.id, data);
-      // Jika kamar berubah, ubah kamar lama jadi tersedia, kamar baru jadi terisi
-      if (editingData.kamarId !== data.kamarId) {
-        updateKamar(editingData.kamarId, { status: "tersedia" });
-        updateKamar(data.kamarId, { status: "terisi" });
-      } else if (data.tanggalKeluar) {
-        // Jika diatur tanggal keluar, kamarnya jadi tersedia
-        updateKamar(data.kamarId, { status: "tersedia" });
-      } else {
-        updateKamar(data.kamarId, { status: "terisi" });
-      }
     } else {
       addPenghuni(data);
-      // Sinkronisasi: otomatis ubah kamar menjadi terisi
-      updateKamar(data.kamarId, { status: "terisi" });
-      
       // Trigger update tagihan agar tagihan penghuni baru langsung muncul
       setTimeout(() => {
         autoGenerateTagihan();
@@ -75,10 +61,6 @@ export default function PenghuniPage() {
   };
 
   const handleDelete = (id: string) => {
-    const penghuni = dataPenghuni.find(p => p.id === id);
-    if (penghuni) {
-      updateKamar(penghuni.kamarId, { status: "tersedia" });
-    }
     deletePenghuni(id);
   };
 
@@ -93,9 +75,9 @@ export default function PenghuniPage() {
             setHasMountedForm(true);
             setIsFormOpen(true);
           }}
-          className="bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+          className="bg-[#567134] hover:bg-[#455b2a] text-white shadow-sm"
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4" />
           Tambah Penghuni
         </Button>
       </div>
@@ -138,7 +120,13 @@ export default function PenghuniPage() {
         </div>
       ) : (
         <PenghuniTable 
-          data={filteredData} 
+          data={[...filteredData].sort((a, b) => {
+            const kamarA = dataKamar.find(k => k.id === a.kamarId);
+            const kamarB = dataKamar.find(k => k.id === b.kamarId);
+            const numA = kamarA ? kamarA.nomorKamar : "";
+            const numB = kamarB ? kamarB.nomorKamar : "";
+            return numA.localeCompare(numB, undefined, { numeric: true, sensitivity: 'base' });
+          })} 
           dataKamar={dataKamar}
           onEdit={handleEdit} 
           onDelete={handleDelete} 

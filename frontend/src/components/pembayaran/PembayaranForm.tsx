@@ -149,11 +149,17 @@ export const PembayaranForm = ({
                 <SelectValue placeholder="Pilih Penghuni" />
               </SelectTrigger>
               <SelectContent>
-                {dataPenghuni.map((penghuni) => (
-                  <SelectItem key={penghuni.id} value={penghuni.id}>
-                    {penghuni.nama}
-                  </SelectItem>
-                ))}
+                {dataPenghuni
+                  .filter((penghuni) => {
+                    if (!penghuni.tanggalKeluar) return true;
+                    if (initialData && initialData.penghuniId === penghuni.id) return true;
+                    return false;
+                  })
+                  .map((penghuni) => (
+                    <SelectItem key={penghuni.id} value={penghuni.id}>
+                      {penghuni.nama}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
@@ -291,7 +297,7 @@ export const PembayaranForm = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Batal
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="bg-[#567134] hover:bg-[#455b2a] text-white">
               Simpan
             </Button>
           </div>

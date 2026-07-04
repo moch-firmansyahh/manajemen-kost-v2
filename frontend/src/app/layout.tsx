@@ -22,6 +22,7 @@ export default function RootLayout({
     <html lang="id" suppressHydrationWarning>
       <body
         className={`${inter.className} bg-background min-h-screen text-foreground`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"

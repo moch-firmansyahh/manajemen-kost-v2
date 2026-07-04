@@ -1,8 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, useRef, useCallback } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import HouseLoader from "@/components/ui/HouseLoader";
+import { WelcomeScreen } from "@/components/ui/WelcomeScreen";
 
 type TransitionContextType = {
   startTransition: () => void;
@@ -78,10 +79,14 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
             pointerEvents: isVisible ? "auto" : "none",
           }}
         >
-          <HouseLoader />
+          {isInitialMount && pathname === "/login" ? (
+            <WelcomeScreen isVisible={isVisible} />
+          ) : (
+            <HouseLoader />
+          )}
         </div>
       )}
-      {(isInitialMount && isTransitioning) ? null : children}
+      {children}
     </TransitionContext.Provider>
   );
 }

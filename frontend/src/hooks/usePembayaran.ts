@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Pembayaran } from '@/types';
 import { globalDataPenghuni } from './usePenghuni';
+import { globalDataKamar } from './useKamar';
 
 const API_URL = 'http://localhost:5000/api/pembayaran';
 
@@ -100,12 +101,15 @@ export const autoGenerateTagihan = async () => {
     );
 
     if (!existingTagihan) {
+      const kamar = globalDataKamar.find(k => k.id === penghuni.kamarId);
+      const harga = kamar ? kamar.hargaPerBulan : 800000;
+
       newTagihan.push({
         penghuniId: penghuni.id,
         kamarId: penghuni.kamarId,
         bulan: currentMonth,
         tahun: currentYear,
-        jumlah: 800000,
+        jumlah: harga,
         tanggalBayar: null,
         status: 'belum_bayar'
       });

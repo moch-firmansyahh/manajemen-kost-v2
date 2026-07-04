@@ -21,7 +21,7 @@ export const createKamar = async (req: Request, res: Response) => {
 
 export const updateKamar = async (req: Request, res: Response) => {
   try {
-    const updated = await kamarService.updateKamar(req.params.id, req.body);
+    const updated = await kamarService.updateKamar(req.params.id as string, req.body);
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update kamar' });
@@ -30,7 +30,7 @@ export const updateKamar = async (req: Request, res: Response) => {
 
 export const deleteKamar = async (req: Request, res: Response) => {
   try {
-    await kamarService.deleteKamar(req.params.id);
+    await kamarService.deleteKamar(req.params.id as string);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete kamar' });

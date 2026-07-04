@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Penghuni } from '@/types';
 import { refetchPembayaranData } from './usePembayaran';
+import { refetchKamarData } from './useKamar';
 
 const API_URL = 'http://localhost:5000/api/penghuni';
 
@@ -51,6 +52,7 @@ export const usePenghuni = () => {
     });
     const newPenghuni = await res.json();
     notifyListeners([...globalDataPenghuni, newPenghuni]);
+    await refetchKamarData();
     await refetchPembayaranData(); // Fetch the newly auto-generated Pembayaran
   };
 
@@ -62,11 +64,15 @@ export const usePenghuni = () => {
     });
     const updated = await res.json();
     notifyListeners(globalDataPenghuni.map(p => p.id === id ? updated : p));
+    await refetchKamarData();
+    await refetchPembayaranData();
   };
 
   const deletePenghuni = async (id: string) => {
     await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
     notifyListeners(globalDataPenghuni.filter(p => p.id !== id));
+    await refetchKamarData();
+    await refetchPembayaranData();
   };
 
   return {

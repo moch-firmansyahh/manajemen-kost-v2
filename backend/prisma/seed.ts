@@ -15,6 +15,7 @@ async function main() {
   await prisma.admin.deleteMany({});
   await prisma.admin.create({
     data: {
+      nama: 'Firman ajah',
       email: 'firmanajah366@gmail.com',
       password: 'Iman12345'
     }
@@ -59,7 +60,6 @@ async function main() {
       nama: 'Budi Santoso',
       nik: '3201010101010001',
       noTelepon: '081234567890',
-      email: 'budi@example.com',
       kamarId: kamarA1.id,
       tanggalMasuk: '2023-01-15',
     }
@@ -70,7 +70,6 @@ async function main() {
       nama: 'Siti Aminah',
       nik: '3201010101010002',
       noTelepon: '081298765432',
-      email: 'siti@example.com',
       kamarId: kamarA3.id,
       tanggalMasuk: '2023-03-10',
     }
@@ -81,7 +80,6 @@ async function main() {
       nama: 'Andi Wijaya',
       nik: '3201010101010003',
       noTelepon: '085612345678',
-      email: 'andi@example.com',
       kamarId: kamarB1.id,
       tanggalMasuk: '2023-06-01',
     }
@@ -92,7 +90,6 @@ async function main() {
       nama: 'Dewi Lestari (Alumni)',
       nik: '3201010101010004',
       noTelepon: '087712345678',
-      email: 'dewi@example.com',
       kamarId: kamarA2.id, // Previously occupied A2
       tanggalMasuk: '2022-01-01',
       tanggalKeluar: '2023-01-01',
@@ -104,7 +101,6 @@ async function main() {
       nama: 'Rina Melati',
       nik: '3201010101010005',
       noTelepon: '089912345678',
-      email: 'rina@example.com',
       kamarId: kamarB3.id,
       tanggalMasuk: new Date().toISOString(), // Recent tenant
     }

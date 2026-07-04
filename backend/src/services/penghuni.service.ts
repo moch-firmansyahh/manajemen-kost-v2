@@ -15,7 +15,6 @@ export const createPenghuni = async (data: any) => {
       nama: data.nama,
       nik: data.nik,
       noTelepon: data.noTelepon,
-      email: data.email,
       kamarId: data.kamarId,
       tanggalMasuk: data.tanggalMasuk,
       tanggalKeluar: data.tanggalKeluar,
@@ -47,18 +46,55 @@ export const createPenghuni = async (data: any) => {
 };
 
 export const updatePenghuni = async (id: string, data: any) => {
-  return await prisma.penghuni.update({
+  const oldPenghuni = await prisma.penghuni.findUnique({ where: { id } });
+  if (!oldPenghuni) throw new Error("Penghuni tidak ditemukan");
+
+  const updatedPenghuni = await prisma.penghuni.update({
     where: { id },
     data: {
       nama: data.nama,
       nik: data.nik,
       noTelepon: data.noTelepon,
-      email: data.email,
       kamarId: data.kamarId,
       tanggalMasuk: data.tanggalMasuk,
       tanggalKeluar: data.tanggalKeluar,
     },
   });
+
+  // Sinkronisasi status kamar agar tidak ada data status kamar sampah
+  if (oldPenghuni.kamarId !== updatedPenghuni.kamarId) {
+    // Kosongkan kamar lama
+    await prisma.kamar.update({
+      where: { id: oldPenghuni.kamarId },
+      data: { status: 'tersedia' }
+    });
+    // Isi kamar baru jika penghuni aktif
+    await prisma.kamar.update({
+      where: { id: updatedPenghuni.kamarId },
+      data: { status: updatedPenghuni.tanggalKeluar ? 'tersedia' : 'terisi' }
+    });
+    // Update kamarId di semua pembayaran milik penghuni ini agar sinkron
+    await prisma.pembayaran.updateMany({
+      where: { penghuniId: id },
+      data: { kamarId: updatedPenghuni.kamarId }
+    });
+  } else {
+    if (!oldPenghuni.tanggalKeluar && updatedPenghuni.tanggalKeluar) {
+      // Baru saja keluar -> bebaskan kamar
+      await prisma.kamar.update({
+        where: { id: updatedPenghuni.kamarId },
+        data: { status: 'tersedia' }
+      });
+    } else if (oldPenghuni.tanggalKeluar && !updatedPenghuni.tanggalKeluar) {
+      // Batal keluar -> kamar terisi kembali
+      await prisma.kamar.update({
+        where: { id: updatedPenghuni.kamarId },
+        data: { status: 'terisi' }
+      });
+    }
+  }
+
+  return updatedPenghuni;
 };
 
 export const deletePenghuni = async (id: string) => {

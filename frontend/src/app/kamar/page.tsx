@@ -52,9 +52,9 @@ export default function KamarPage() {
             setHasMountedForm(true);
             setIsFormOpen(true);
           }}
-          className="bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+          className="bg-[#567134] hover:bg-[#455b2a] text-white shadow-sm"
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4" />
           Tambah Kamar
         </Button>
       </div>

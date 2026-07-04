@@ -23,6 +23,7 @@ interface NavbarProps {
 export const Navbar = ({ toggleSidebar }: NavbarProps) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [adminName, setAdminName] = useState("");
   const { dataPembayaran } = usePembayaran();
   const { dataPenghuni } = usePenghuni();
 
@@ -34,6 +35,34 @@ export const Navbar = ({ toggleSidebar }: NavbarProps) => {
 
   useEffect(() => {
     setMounted(true);
+
+    const loadProfile = async () => {
+      const cached = localStorage.getItem("adminName");
+      if (cached) setAdminName(cached);
+
+      try {
+        const res = await fetch("http://localhost:5000/api/profile");
+        if (res.ok) {
+          const data = await res.json();
+          setAdminName(data.nama);
+          localStorage.setItem("adminName", data.nama);
+        }
+      } catch (err) {
+        console.error("Gagal sinkronisasi nama di Navbar:", err);
+      }
+    };
+
+    loadProfile();
+
+    const handleStorageChange = () => {
+      const updated = localStorage.getItem("adminName");
+      if (updated) setAdminName(updated);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   return (
@@ -119,8 +148,8 @@ export const Navbar = ({ toggleSidebar }: NavbarProps) => {
         </DropdownMenu>
         
         <Link href="/profile">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-medium text-sm shadow-sm ring-2 ring-background cursor-pointer hover:shadow-md transition-all hover:scale-105">
-            A
+          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-[#567134] to-[#7c9e50] flex items-center justify-center text-white font-medium text-sm shadow-sm ring-2 ring-background cursor-pointer hover:shadow-md transition-all hover:scale-105">
+            {adminName ? adminName.trim().charAt(0).toUpperCase() : "A"}
           </div>
         </Link>
       </div>

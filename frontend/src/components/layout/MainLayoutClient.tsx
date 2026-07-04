@@ -21,7 +21,7 @@ export const MainLayoutClient = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     // Periksa status login
     const isLoginPage = pathname === "/login";
-    const isAuth = sessionStorage.getItem("isAuth");
+    const isAuth = sessionStorage.getItem("isAuth") || localStorage.getItem("isAuth");
 
     if (!isAuth && !isLoginPage) {
       router.push("/login");

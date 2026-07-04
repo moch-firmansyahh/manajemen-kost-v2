@@ -21,7 +21,7 @@ export const createPenghuni = async (req: Request, res: Response) => {
 
 export const updatePenghuni = async (req: Request, res: Response) => {
   try {
-    const updated = await penghuniService.updatePenghuni(req.params.id, req.body);
+    const updated = await penghuniService.updatePenghuni(req.params.id as string, req.body);
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update penghuni' });
@@ -30,7 +30,7 @@ export const updatePenghuni = async (req: Request, res: Response) => {
 
 export const deletePenghuni = async (req: Request, res: Response) => {
   try {
-    await penghuniService.deletePenghuni(req.params.id);
+    await penghuniService.deletePenghuni(req.params.id as string);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete penghuni' });

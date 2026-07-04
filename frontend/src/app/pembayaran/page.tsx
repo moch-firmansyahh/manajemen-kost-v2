@@ -83,9 +83,9 @@ export default function PembayaranPage() {
             setHasMountedForm(true);
             setIsFormOpen(true);
           }}
-          className="bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+          className="bg-[#567134] hover:bg-[#455b2a] text-white shadow-sm"
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4" />
           Catat Pembayaran
         </Button>
       </div>
@@ -137,7 +137,13 @@ export default function PembayaranPage() {
         </div>
       ) : (
         <PembayaranTable 
-          data={filteredData} 
+          data={[...filteredData].sort((a, b) => {
+            const kamarA = dataKamar.find(k => k.id === a.kamarId);
+            const kamarB = dataKamar.find(k => k.id === b.kamarId);
+            const numA = kamarA ? kamarA.nomorKamar : "";
+            const numB = kamarB ? kamarB.nomorKamar : "";
+            return numA.localeCompare(numB, undefined, { numeric: true, sensitivity: 'base' });
+          })} 
           dataPenghuni={dataPenghuni}
           dataKamar={dataKamar}
           onEdit={handleEdit} 

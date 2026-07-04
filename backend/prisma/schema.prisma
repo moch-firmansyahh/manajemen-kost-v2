@@ -31,13 +31,12 @@ model Penghuni {
   nama          String
   nik           String
   noTelepon     String
-  email         String
   kamarId       String
   tanggalMasuk  String
   tanggalKeluar String?
   createdAt     DateTime     @default(now())
 
-  kamar         Kamar        @relation(fields: [kamarId], references: [id])
+  kamar         Kamar        @relation(fields: [kamarId], references: [id], onDelete: Cascade)
   pembayaran    Pembayaran[]
 }
 
@@ -52,12 +51,13 @@ model Pembayaran {
   status       String
   createdAt    DateTime  @default(now())
 
-  penghuni     Penghuni  @relation(fields: [penghuniId], references: [id])
-  kamar        Kamar     @relation(fields: [kamarId], references: [id])
+  penghuni     Penghuni  @relation(fields: [penghuniId], references: [id], onDelete: Cascade)
+  kamar        Kamar     @relation(fields: [kamarId], references: [id], onDelete: Cascade)
 }
 
 model Admin {
   id        String   @id @default(cuid())
+  nama      String   @default("Firman ajah")
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
