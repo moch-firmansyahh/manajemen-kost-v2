@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, ArrowLeft, Check, X } from "lucide-react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/utils";
 
 export default function GantiSandiPage() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function GantiSandiPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/profile/change-password", {
+      const res = await fetch(`${API_BASE_URL}/api/profile/change-password`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentPassword, newPassword }),

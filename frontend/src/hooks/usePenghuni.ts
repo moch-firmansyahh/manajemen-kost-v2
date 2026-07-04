@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Penghuni } from '@/types';
 import { refetchPembayaranData } from './usePembayaran';
 import { refetchKamarData } from './useKamar';
+import { API_BASE_URL } from '@/lib/utils';
 
-const API_URL = 'http://localhost:5000/api/penghuni';
+const API_URL = `${API_BASE_URL}/api/penghuni`;
 
 export let globalDataPenghuni: Penghuni[] = [];
 let listeners: React.Dispatch<React.SetStateAction<Penghuni[]>>[] = [];

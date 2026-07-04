@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePembayaran } from '@/hooks/usePembayaran';
 import { usePenghuni } from '@/hooks/usePenghuni';
+import { API_BASE_URL } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +24,7 @@ interface NavbarProps {
 export const Navbar = ({ toggleSidebar }: NavbarProps) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [adminName, setAdminName] = useState("");
+  const [adminName, setAdminName] = useState<string>("Admin Kost");
   const { dataPembayaran } = usePembayaran();
   const { dataPenghuni } = usePenghuni();
 
@@ -41,7 +42,7 @@ export const Navbar = ({ toggleSidebar }: NavbarProps) => {
       if (cached) setAdminName(cached);
 
       try {
-        const res = await fetch("http://localhost:5000/api/profile");
+        const res = await fetch(`${API_BASE_URL}/api/profile`);
         if (res.ok) {
           const data = await res.json();
           setAdminName(data.nama);

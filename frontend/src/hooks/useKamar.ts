@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Kamar } from '@/types';
+import { API_BASE_URL } from '@/lib/utils';
 
-const API_URL = 'http://localhost:5000/api/kamar';
+const API_URL = `${API_BASE_URL}/api/kamar`;
 
 export let globalDataKamar: Kamar[] = [];
 let listeners: React.Dispatch<React.SetStateAction<Kamar[]>>[] = [];

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Pembayaran } from '@/types';
 import { globalDataPenghuni } from './usePenghuni';
 import { globalDataKamar } from './useKamar';
+import { API_BASE_URL } from '@/lib/utils';
 
-const API_URL = 'http://localhost:5000/api/pembayaran';
+const API_URL = `${API_BASE_URL}/api/pembayaran`;
 
 export let globalDataPembayaran: Pembayaran[] = [];
 let listeners: React.Dispatch<React.SetStateAction<Pembayaran[]>>[] = [];

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { User, Mail, LogOut, Key } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/utils";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/profile");
+        const res = await fetch(`${API_BASE_URL}/api/profile`);
         if (res.ok) {
           const data = await res.json();
           setNama(data.nama);
