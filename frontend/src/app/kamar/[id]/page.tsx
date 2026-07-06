@@ -34,8 +34,16 @@ export default function KamarDetailPage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  const penghuniKamar = dataPenghuni.filter(p => p.kamarId === id);
-  const riwayatPembayaran = dataPembayaran.filter(p => p.kamarId === id);
+  // Mencari penghuni yang saat ini menempati kamar (belum keluar)
+  const activePenghuni = dataPenghuni.find(p => p.kamarId === id && p.tanggalKeluar === null);
+  
+  // Tampilkan data penghuni hanya jika ada penghuni aktif
+  const penghuniKamar = activePenghuni ? [activePenghuni] : [];
+  
+  // Tampilkan riwayat pembayaran hanya untuk penghuni aktif tersebut
+  const riwayatPembayaran = activePenghuni 
+    ? dataPembayaran.filter(p => p.kamarId === id && p.penghuniId === activePenghuni.id) 
+    : [];
 
   return (
     <div className="space-y-6">
@@ -88,7 +96,7 @@ export default function KamarDetailPage({ params }: { params: Promise<{ id: stri
         <div className="lg:col-span-2 space-y-6">
           <Card className="border-border shadow-sm">
             <CardHeader>
-              <CardTitle>Riwayat Penghuni</CardTitle>
+              <CardTitle>Penghuni</CardTitle>
             </CardHeader>
             <CardContent>
               {penghuniKamar.length > 0 ? (
@@ -119,7 +127,7 @@ export default function KamarDetailPage({ params }: { params: Promise<{ id: stri
                   </TableBody>
                 </Table>
               ) : (
-                <div className="text-center py-6 text-muted-foreground">Belum ada riwayat penghuni</div>
+                <div className="text-center py-6 text-muted-foreground">Belum ada penghuni</div>
               )}
             </CardContent>
           </Card>
