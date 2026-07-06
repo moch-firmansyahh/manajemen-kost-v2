@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useKamar } from "@/hooks/useKamar";
 import { usePenghuni } from "@/hooks/usePenghuni";
 import { usePembayaran } from "@/hooks/usePembayaran";
@@ -11,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { exportKamarPenghuniToPDF } from "@/lib/pdfExport";
 
 export default function Dashboard() {
@@ -19,6 +21,9 @@ export default function Dashboard() {
   const { dataPembayaran, isLoading: isPembayaranLoading } = usePembayaran();
   
   const isLoading = isKamarLoading || isPenghuniLoading || isPembayaranLoading;
+
+  const [selectedBulan, setSelectedBulan] = useState<string>("semua");
+  const [selectedTahun, setSelectedTahun] = useState<number>(new Date().getFullYear());
 
   const totalKamar = dataKamar.length;
   const kamarTerisi = dataKamar.filter(k => k.status === "terisi").length;
@@ -54,14 +59,37 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
         </div>
         {!isLoading && (
-          <Button
-            variant="outline"
-            onClick={() => exportKamarPenghuniToPDF(dataKamar, dataPenghuni)}
-            className="border-border text-foreground hover:bg-muted shadow-sm"
-          >
-            <FileDown className="h-4 w-4 mr-2" />
-            Cetak PDF
-          </Button>
+          <div className="flex flex-wrap items-center gap-3">
+            <Select value={selectedBulan} onValueChange={setSelectedBulan}>
+              <SelectTrigger className="w-[140px] bg-background border-border">
+                <SelectValue placeholder="Pilih Bulan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="semua">Semua Bulan</SelectItem>
+                {namaBulan.map((b) => (
+                  <SelectItem key={b} value={b}>{b}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedTahun.toString()} onValueChange={(val) => setSelectedTahun(parseInt(val))}>
+              <SelectTrigger className="w-[100px] bg-background border-border">
+                <SelectValue placeholder="Tahun" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2025">2025</SelectItem>
+                <SelectItem value="2026">2026</SelectItem>
+                <SelectItem value="2027">2027</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              onClick={() => exportKamarPenghuniToPDF(dataKamar, dataPenghuni, dataPembayaran, selectedBulan, selectedTahun)}
+              className="border-border text-foreground hover:bg-muted shadow-sm"
+            >
+              <FileDown className="h-4 w-4 mr-2" />
+              Cetak PDF
+            </Button>
+          </div>
         )}
       </div>
 

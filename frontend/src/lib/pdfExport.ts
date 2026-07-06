@@ -1,7 +1,13 @@
-import { Kamar, Penghuni } from "@/types";
+import { Kamar, Penghuni, Pembayaran } from "@/types";
 import { formatRupiah, formatDate } from "./utils";
 
-export const exportKamarPenghuniToPDF = (dataKamar: Kamar[], dataPenghuni: Penghuni[]) => {
+export const exportKamarPenghuniToPDF = (
+  dataKamar: Kamar[],
+  dataPenghuni: Penghuni[],
+  dataPembayaran: Pembayaran[],
+  selectedBulan: string,
+  selectedTahun: number
+) => {
   // Sort kamar naturally by room number
   const sortedKamar = [...dataKamar].sort((a, b) => {
     return a.nomorKamar.localeCompare(b.nomorKamar, undefined, { numeric: true, sensitivity: 'base' });
@@ -20,22 +26,81 @@ export const exportKamarPenghuniToPDF = (dataKamar: Kamar[], dataPenghuni: Pengh
     day: 'numeric'
   });
 
-  let tableRows = '';
-  sortedKamar.forEach((kamar) => {
-    // Find active occupant
-    const activePenghuni = dataPenghuni.find(p => p.kamarId === kamar.id && p.tanggalKeluar === null);
+  const namaBulanList = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
 
-    const statusBadgeColor = 
-      kamar.status === 'tersedia' ? '#def7ec' : 
-      kamar.status === 'terisi' ? '#e1effe' : '#fde8e8';
-    
-    const statusTextColor = 
-      kamar.status === 'tersedia' ? '#03543f' : 
-      kamar.status === 'terisi' ? '#1e429f' : '#9b1c1c';
+  let tableRows = '';
+  const isFilterBulan = selectedBulan !== "semua";
+
+  sortedKamar.forEach((kamar) => {
+    let activePenghuni: Penghuni | undefined = undefined;
+
+    if (isFilterBulan) {
+      // Find occupant active during selected month & year
+      const monthIndex = namaBulanList.indexOf(selectedBulan);
+      const monthStart = new Date(selectedTahun, monthIndex, 1);
+      const monthEnd = new Date(selectedTahun, monthIndex + 1, 0, 23, 59, 59);
+
+      activePenghuni = dataPenghuni.find(p => {
+        if (p.kamarId !== kamar.id) return false;
+        const tglMasuk = new Date(p.tanggalMasuk);
+        const tglKeluar = p.tanggalKeluar ? new Date(p.tanggalKeluar) : null;
+        return tglMasuk <= monthEnd && (tglKeluar === null || tglKeluar >= monthStart);
+      });
+    } else {
+      // Find current active occupant (no checkout date)
+      activePenghuni = dataPenghuni.find(p => p.kamarId === kamar.id && p.tanggalKeluar === null);
+    }
+
+    // Badge style for Kamar Status
+    let statusBadgeStyle = '';
+    if (kamar.status === 'tersedia') {
+      statusBadgeStyle = 'background-color: #f3f4f6; color: #1f2937;';
+    } else if (kamar.status === 'terisi') {
+      statusBadgeStyle = 'background-color: #e5e7eb; color: #1f2937;';
+    } else {
+      statusBadgeStyle = 'background-color: #ffffff; border: 1px solid #d1d5db; color: #6b7280;';
+    }
 
     const statusLabel = 
       kamar.status === 'tersedia' ? 'Tersedia' : 
       kamar.status === 'terisi' ? 'Terisi' : 'Maintenance';
+
+    // Payment status block (only visible in monthly report)
+    let paymentCellHTML = '';
+    if (isFilterBulan) {
+      let paymentLabel = '-';
+      let paymentBadgeStyle = '';
+
+      if (activePenghuni) {
+        const payment = dataPembayaran.find(
+          pay => pay.penghuniId === activePenghuni!.id && 
+                 pay.bulan === selectedBulan && 
+                 pay.tahun === selectedTahun
+        );
+
+        if (payment) {
+          if (payment.status === 'lunas') {
+            paymentLabel = 'Lunas';
+            paymentBadgeStyle = 'background-color: #f3f4f6; color: #111827; border: 1px solid #111827;';
+          } else {
+            paymentLabel = payment.status === 'terlambat' ? 'Terlambat' : 'Belum Bayar';
+            paymentBadgeStyle = 'background-color: #111827; color: #ffffff;';
+          }
+        } else {
+          paymentLabel = 'Belum Bayar';
+          paymentBadgeStyle = 'background-color: #111827; color: #ffffff;';
+        }
+      }
+
+      paymentCellHTML = `
+        <td>
+          ${activePenghuni ? `<span class="badge" style="${paymentBadgeStyle}">${paymentLabel}</span>` : '-'}
+        </td>
+      `;
+    }
 
     tableRows += `
       <tr>
@@ -43,7 +108,7 @@ export const exportKamarPenghuniToPDF = (dataKamar: Kamar[], dataPenghuni: Pengh
         <td>${kamar.tipe}</td>
         <td style="text-align: center;">${kamar.lantai}</td>
         <td>
-          <span class="badge" style="background-color: ${statusBadgeColor}; color: ${statusTextColor};">
+          <span class="badge" style="${statusBadgeStyle}">
             ${statusLabel}
           </span>
         </td>
@@ -53,17 +118,35 @@ export const exportKamarPenghuniToPDF = (dataKamar: Kamar[], dataPenghuni: Pengh
         </td>
         <td>${activePenghuni ? activePenghuni.noTelepon : '-'}</td>
         <td>${activePenghuni ? formatDate(activePenghuni.tanggalMasuk) : '-'}</td>
+        ${paymentCellHTML}
       </tr>
     `;
   });
 
   const logoUrl = `${window.location.origin}/Logo-Kost.png`;
+  const reportTitle = isFilterBulan 
+    ? `Laporan Data Kamar & Penghuni - ${selectedBulan} ${selectedTahun}`
+    : "Laporan Data Kamar & Penghuni Aktif";
+
+  const tableHeaderHTML = `
+    <tr>
+      <th style="width: 10%; text-align: center;">No. Kamar</th>
+      <th style="width: 10%;">Tipe</th>
+      <th style="width: 8%; text-align: center;">Lantai</th>
+      <th style="width: 12%;">Status</th>
+      <th style="width: 14%;">Harga / Bulan</th>
+      <th style="width: 16%;">Nama Penghuni</th>
+      <th style="width: 12%;">No. Telepon</th>
+      <th style="width: 10%;">Tgl Masuk</th>
+      ${isFilterBulan ? `<th style="width: 12%;">Status Bayar</th>` : ''}
+    </tr>
+  `;
 
   const htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
-      <title>Laporan Data Kamar dan Penghuni - Kontrakan Pa Iman</title>
+      <title>${reportTitle}</title>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
@@ -146,7 +229,7 @@ export const exportKamarPenghuniToPDF = (dataKamar: Kamar[], dataPenghuni: Pengh
 
         .divider-bar {
           height: 3px;
-          background-color: #567134;
+          background-color: #111827;
           width: 100%;
           margin-bottom: 24px;
           border-radius: 2px;
@@ -160,10 +243,10 @@ export const exportKamarPenghuniToPDF = (dataKamar: Kamar[], dataPenghuni: Pengh
           margin: 0;
           font-size: 15px;
           font-weight: 700;
-          color: #374151;
+          color: #111827;
           letter-spacing: 0.05em;
           text-transform: uppercase;
-          border-left: 4px solid #567134;
+          border-left: 4px solid #111827;
           padding-left: 10px;
           line-height: 1;
         }
@@ -240,21 +323,12 @@ export const exportKamarPenghuniToPDF = (dataKamar: Kamar[], dataPenghuni: Pengh
       <div class="divider-bar"></div>
 
       <div class="report-header">
-        <h2 class="report-title">Laporan Data Kamar & Penghuni Aktif</h2>
+        <h2 class="report-title">${reportTitle}</h2>
       </div>
 
       <table>
         <thead>
-          <tr>
-            <th style="width: 10%; text-align: center;">No. Kamar</th>
-            <th style="width: 12%;">Tipe</th>
-            <th style="width: 8%; text-align: center;">Lantai</th>
-            <th style="width: 12%;">Status</th>
-            <th style="width: 16%;">Harga / Bulan</th>
-            <th style="width: 18%;">Nama Penghuni</th>
-            <th style="width: 12%;">No. Telepon</th>
-            <th style="width: 12%;">Tgl Masuk</th>
-          </tr>
+          ${tableHeaderHTML}
         </thead>
         <tbody>
           ${tableRows}
@@ -263,7 +337,6 @@ export const exportKamarPenghuniToPDF = (dataKamar: Kamar[], dataPenghuni: Pengh
 
       <script>
         window.onload = function() {
-          // Sedikit jeda untuk memastikan logo gambar dimuat penuh sebelum memicu print
           setTimeout(function() {
             window.print();
           }, 300);
