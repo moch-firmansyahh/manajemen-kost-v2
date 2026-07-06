@@ -43,12 +43,11 @@ export default function Dashboard() {
 
   const unpaidPembayaran = dataPembayaran.filter(p => p.status === "terlambat");
 
-  const now = new Date();
-  const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(now.getMonth() - 1);
-
   const penghuniTerbaru = dataPenghuni
-    .filter(p => new Date(p.tanggalMasuk) >= oneMonthAgo)
+    .filter(p => {
+      const tglMasuk = new Date(p.tanggalMasuk);
+      return tglMasuk.getMonth() === currentMonthIndex && tglMasuk.getFullYear() === currentYear;
+    })
     .sort((a, b) => new Date(b.tanggalMasuk).getTime() - new Date(a.tanggalMasuk).getTime())
     .slice(0, 5);
 
