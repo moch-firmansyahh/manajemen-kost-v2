@@ -4,12 +4,14 @@ import { useKamar } from "@/hooks/useKamar";
 import { usePenghuni } from "@/hooks/usePenghuni";
 import { usePembayaran } from "@/hooks/usePembayaran";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { BedDouble, Users, Wallet, AlertCircle } from "lucide-react";
+import { BedDouble, Users, Wallet, AlertCircle, FileDown } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { exportKamarPenghuniToPDF } from "@/lib/pdfExport";
 
 export default function Dashboard() {
   const { dataKamar, isLoading: isKamarLoading } = useKamar();
@@ -47,8 +49,20 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
+        </div>
+        {!isLoading && (
+          <Button
+            variant="outline"
+            onClick={() => exportKamarPenghuniToPDF(dataKamar, dataPenghuni)}
+            className="border-border text-foreground hover:bg-muted shadow-sm"
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Cetak PDF
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
