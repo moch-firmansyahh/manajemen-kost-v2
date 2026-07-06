@@ -6,13 +6,16 @@ import { KamarTable } from "@/components/kamar/KamarTable";
 import dynamic from "next/dynamic";
 const KamarForm = dynamic(() => import("@/components/kamar/KamarForm").then(mod => mod.KamarForm), { ssr: false });
 import { Button } from "@/components/ui/button";
-import { Plus, Filter } from "lucide-react";
+import { Plus, Filter, FileDown } from "lucide-react";
 import { Kamar, StatusKamar } from "@/types";
+import { usePenghuni } from "@/hooks/usePenghuni";
+import { exportKamarPenghuniToPDF } from "@/lib/pdfExport";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function KamarPage() {
   const { dataKamar, isLoading, addKamar, updateKamar, deleteKamar } = useKamar();
+  const { dataPenghuni } = usePenghuni();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [hasMountedForm, setHasMountedForm] = useState(false);
   const [editingData, setEditingData] = useState<Kamar | null>(null);
@@ -47,16 +50,26 @@ export default function KamarPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Kamar</h1>
         </div>
-        <Button 
-          onClick={() => {
-            setHasMountedForm(true);
-            setIsFormOpen(true);
-          }}
-          className="bg-[#567134] hover:bg-[#455b2a] text-white shadow-sm"
-        >
-          <Plus className="h-4 w-4" />
-          Tambah Kamar
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={() => exportKamarPenghuniToPDF(dataKamar, dataPenghuni)}
+            className="border-border text-foreground hover:bg-muted"
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Cetak PDF
+          </Button>
+          <Button 
+            onClick={() => {
+              setHasMountedForm(true);
+              setIsFormOpen(true);
+            }}
+            className="bg-[#567134] hover:bg-[#455b2a] text-white shadow-sm"
+          >
+            <Plus className="h-4 w-4" />
+            Tambah Kamar
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 max-w-xs">
