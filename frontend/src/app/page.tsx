@@ -24,6 +24,7 @@ export default function Dashboard() {
 
   const [selectedBulan, setSelectedBulan] = useState<string>("semua");
   const [selectedTahun, setSelectedTahun] = useState<number>(new Date().getFullYear());
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const totalKamar = dataKamar.length;
   const kamarTerisi = dataKamar.filter(k => k.status === "terisi").length;
@@ -58,37 +59,14 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
         </div>
         {!isLoading && (
-          <div className="flex flex-wrap items-center gap-3">
-            <Select value={selectedBulan} onValueChange={setSelectedBulan}>
-              <SelectTrigger className="w-[140px] bg-background border-border">
-                <SelectValue placeholder="Pilih Bulan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="semua">Semua Bulan</SelectItem>
-                {namaBulan.map((b) => (
-                  <SelectItem key={b} value={b}>{b}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedTahun.toString()} onValueChange={(val) => setSelectedTahun(parseInt(val))}>
-              <SelectTrigger className="w-[100px] bg-background border-border">
-                <SelectValue placeholder="Tahun" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2025">2025</SelectItem>
-                <SelectItem value="2026">2026</SelectItem>
-                <SelectItem value="2027">2027</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="outline"
-              onClick={() => exportKamarPenghuniToPDF(dataKamar, dataPenghuni, dataPembayaran, selectedBulan, selectedTahun)}
-              className="border-border text-foreground hover:bg-muted shadow-sm"
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              Cetak PDF
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            onClick={() => setIsModalOpen(true)}
+            className="border-border text-foreground hover:bg-muted shadow-sm"
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Cetak PDF
+          </Button>
         )}
       </div>
 
@@ -203,6 +181,68 @@ export default function Dashboard() {
             </Card>
           </div>
         </>
+      )}
+
+      {/* Modal Cetak PDF */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300">
+          <div className="bg-background border border-border p-6 rounded-2xl shadow-2xl max-w-sm w-full space-y-6 animate-in fade-in zoom-in-95 duration-200">
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Cetak Laporan PDF</h3>
+              <p className="text-sm text-muted-foreground mt-1">Pilih filter periode bulanan laporan yang ingin dicetak.</p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bulan</label>
+                <Select value={selectedBulan} onValueChange={setSelectedBulan}>
+                  <SelectTrigger className="w-full bg-muted/50 border-border h-11">
+                    <SelectValue placeholder="Pilih Bulan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="semua">Semua Bulan</SelectItem>
+                    {namaBulan.map((b) => (
+                      <SelectItem key={b} value={b}>{b}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tahun</label>
+                <Select value={selectedTahun.toString()} onValueChange={(val) => setSelectedTahun(parseInt(val))}>
+                  <SelectTrigger className="w-full bg-muted/50 border-border h-11">
+                    <SelectValue placeholder="Tahun" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2025">2025</SelectItem>
+                    <SelectItem value="2026">2026</SelectItem>
+                    <SelectItem value="2027">2027</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2">
+              <Button
+                variant="ghost"
+                onClick={() => setIsModalOpen(false)}
+                className="hover:bg-muted font-medium"
+              >
+                Batal
+              </Button>
+              <Button
+                onClick={() => {
+                  exportKamarPenghuniToPDF(dataKamar, dataPenghuni, dataPembayaran, selectedBulan, selectedTahun);
+                  setIsModalOpen(false);
+                }}
+                className="bg-[#567134] hover:bg-[#455b2a] text-white font-medium shadow-md shadow-[#567134]/15"
+              >
+                Cetak Laporan
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
