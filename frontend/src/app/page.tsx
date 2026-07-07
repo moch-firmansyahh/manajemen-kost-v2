@@ -185,7 +185,7 @@ export default function Dashboard() {
 
       {/* Modal Cetak PDF */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-opacity duration-200">
           <div className="bg-background border border-border p-6 rounded-2xl shadow-2xl max-w-sm w-full space-y-6 animate-in fade-in zoom-in-95 duration-200">
             <div>
               <h3 className="text-lg font-bold text-foreground">Cetak Laporan PDF</h3>
