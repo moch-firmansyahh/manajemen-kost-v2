@@ -37,6 +37,7 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
             alt="Logo Kontrakan Pa Iman" 
             width={200} 
             height={80} 
+            priority
             className="object-contain w-full h-full max-h-16"
           />
         </TransitionLink>
