@@ -1,6 +1,39 @@
 import { Kamar, Penghuni, Pembayaran } from "@/types";
 import { formatRupiah, formatDate } from "./utils";
 
+// Timezone-safe local date parser
+const parseAsLocalDate = (dateStr: string | null | undefined): Date | null => {
+  if (!dateStr || dateStr === "null" || dateStr === "undefined" || dateStr.trim() === "") return null;
+  
+  // If it is an ISO string with T (e.g. "2026-07-04T12:34:56.789Z" or "2026-07-04T00:00:00.000Z")
+  if (dateStr.includes('T')) {
+    const datePart = dateStr.split('T')[0];
+    const parts = datePart.split('-');
+    if (parts.length === 3) {
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      const d = parseInt(parts[2], 10);
+      if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+        return new Date(y, m, d);
+      }
+    }
+  }
+  
+  // If it is "YYYY-MM-DD"
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10) - 1;
+    const d = parseInt(parts[2], 10);
+    if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+      return new Date(y, m, d);
+    }
+  }
+  
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+};
+
 export const exportKamarPenghuniToPDF = (
   dataKamar: Kamar[],
   dataPenghuni: Penghuni[],
@@ -15,7 +48,7 @@ export const exportKamarPenghuniToPDF = (
 
   const printWindow = window.open('', '_blank');
   if (!printWindow) {
-    alert("Gagal membuka jendela cetak. Pastikan pop-up blocker Anda dinonaktifkan.");
+    alert("Gagal membuka jendela cetak. Pop-up blocker terdeteksi. Silakan nonaktifkan pop-up blocker Anda.");
     return;
   }
 
@@ -45,8 +78,10 @@ export const exportKamarPenghuniToPDF = (
 
       activePenghuni = dataPenghuni.find(p => {
         if (p.kamarId !== kamar.id) return false;
-        const tglMasuk = new Date(p.tanggalMasuk);
-        const tglKeluar = p.tanggalKeluar ? new Date(p.tanggalKeluar) : null;
+        const tglMasuk = parseAsLocalDate(p.tanggalMasuk);
+        const tglKeluar = parseAsLocalDate(p.tanggalKeluar);
+        
+        if (!tglMasuk) return false;
         return tglMasuk <= monthEnd && (tglKeluar === null || tglKeluar >= monthStart);
       });
     } else {
@@ -54,19 +89,36 @@ export const exportKamarPenghuniToPDF = (
       activePenghuni = dataPenghuni.find(p => p.kamarId === kamar.id && p.tanggalKeluar === null);
     }
 
-    // Badge style for Kamar Status
+    // Dynamic monthly room status determination
+    let statusLabel = '';
     let statusBadgeStyle = '';
-    if (kamar.status === 'tersedia') {
-      statusBadgeStyle = 'background-color: #f3f4f6; color: #1f2937;';
-    } else if (kamar.status === 'terisi') {
-      statusBadgeStyle = 'background-color: #e5e7eb; color: #1f2937;';
-    } else {
-      statusBadgeStyle = 'background-color: #ffffff; border: 1px solid #d1d5db; color: #6b7280;';
-    }
 
-    const statusLabel = 
-      kamar.status === 'tersedia' ? 'Tersedia' : 
-      kamar.status === 'terisi' ? 'Terisi' : 'Maintenance';
+    if (isFilterBulan) {
+      if (activePenghuni) {
+        statusLabel = 'Terisi';
+        statusBadgeStyle = 'background-color: #e5e7eb; color: #1f2937;';
+      } else {
+        if (kamar.status === 'maintenance') {
+          statusLabel = 'Maintenance';
+          statusBadgeStyle = 'background-color: #ffffff; border: 1px solid #d1d5db; color: #6b7280;';
+        } else {
+          statusLabel = 'Tersedia';
+          statusBadgeStyle = 'background-color: #f3f4f6; color: #1f2937;';
+        }
+      }
+    } else {
+      // Standard current room status
+      if (kamar.status === 'tersedia') {
+        statusLabel = 'Tersedia';
+        statusBadgeStyle = 'background-color: #f3f4f6; color: #1f2937;';
+      } else if (kamar.status === 'terisi') {
+        statusLabel = 'Terisi';
+        statusBadgeStyle = 'background-color: #e5e7eb; color: #1f2937;';
+      } else {
+        statusLabel = 'Maintenance';
+        statusBadgeStyle = 'background-color: #ffffff; border: 1px solid #d1d5db; color: #6b7280;';
+      }
+    }
 
     // Payment status block (only visible in monthly report)
     let paymentCellHTML = '';
