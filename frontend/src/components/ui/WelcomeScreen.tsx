@@ -7,7 +7,7 @@ interface WelcomeScreenProps {
   isVisible: boolean;
 }
 
-export function WelcomeScreen({ isVisible }: WelcomeScreenProps) {
+export function WelcomeScreen({ isVisible: _isVisible }: WelcomeScreenProps) {
   return (
     <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white dark:bg-zinc-950 transition-colors duration-300 select-none">
       

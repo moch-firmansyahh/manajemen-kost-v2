@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useRef, useCallback } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import HouseLoader from "@/components/ui/HouseLoader";
 import { WelcomeScreen } from "@/components/ui/WelcomeScreen";
 

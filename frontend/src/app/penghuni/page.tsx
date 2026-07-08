@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePenghuni } from "@/hooks/usePenghuni";
 import { useKamar } from "@/hooks/useKamar";
-import { autoGenerateTagihan, usePembayaran } from "@/hooks/usePembayaran";
+import { autoGenerateTagihan } from "@/hooks/usePembayaran";
 import { PenghuniTable } from "@/components/penghuni/PenghuniTable";
 import dynamic from "next/dynamic";
 const PenghuniForm = dynamic(() => import("@/components/penghuni/PenghuniForm").then(mod => mod.PenghuniForm), { ssr: false });

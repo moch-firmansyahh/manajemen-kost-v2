@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Bell, Sun, Moon, AlertCircle, ArrowRight } from 'lucide-react';
+import { Menu, Bell, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';

@@ -10,6 +10,13 @@ import { Eye, EyeOff, ArrowLeft, Check, X } from "lucide-react";
 import Link from "next/link";
 import { API_BASE_URL } from "@/lib/utils";
 
+const ValidationItem = ({ isValid, text }: { isValid: boolean, text: string }) => (
+  <div className={`flex items-center text-sm ${isValid ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+    {isValid ? <Check className="w-4 h-4 mr-2" /> : <X className="w-4 h-4 mr-2 opacity-50" />}
+    <span>{text}</span>
+  </div>
+);
+
 export default function GantiSandiPage() {
   const router = useRouter();
   
@@ -68,18 +75,13 @@ export default function GantiSandiPage() {
       
       // Jika berhasil, langsung alihkan ke halaman profile tanpa jeda popup
       router.push("/profile");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const errorObj = err as Error;
+      setError(errorObj.message);
       setIsLoading(false);
     }
   };
 
-  const ValidationItem = ({ isValid, text }: { isValid: boolean, text: string }) => (
-    <div className={`flex items-center text-sm ${isValid ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
-      {isValid ? <Check className="w-4 h-4 mr-2" /> : <X className="w-4 h-4 mr-2 opacity-50" />}
-      <span>{text}</span>
-    </div>
-  );
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">

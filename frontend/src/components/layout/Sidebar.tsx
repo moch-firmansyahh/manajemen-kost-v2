@@ -6,7 +6,6 @@ import { LayoutDashboard, BedDouble, Users, CreditCard, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { TransitionLink } from '@/components/ui/TransitionLink';
-import Link from 'next/link';
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },

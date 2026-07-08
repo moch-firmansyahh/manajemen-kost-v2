@@ -5,7 +5,7 @@ import { useKamar } from "@/hooks/useKamar";
 import { usePenghuni } from "@/hooks/usePenghuni";
 import { usePembayaran } from "@/hooks/usePembayaran";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { BedDouble, Users, Wallet, AlertCircle, FileDown } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";

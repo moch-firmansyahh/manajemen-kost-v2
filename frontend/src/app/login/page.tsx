@@ -65,8 +65,9 @@ export default function LoginPage() {
       setTimeout(() => {
         router.push("/");
       }, 1200);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const errorObj = err as Error;
+      setError(errorObj.message);
       setIsLoading(false);
     }
   };
