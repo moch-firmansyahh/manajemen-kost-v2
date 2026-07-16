@@ -22,6 +22,10 @@ app.use('/api/penghuni', penghuniRoutes);
 app.use('/api/pembayaran', pembayaranRoutes);
 app.use('/api', authRoutes);
 
+app.get('/', (req, res) => {
+  res.status(200).send('<h1>Manajemen Kost V2 API</h1><p>Backend is running successfully!</p>');
+});
+
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Backend is running' });
 });
