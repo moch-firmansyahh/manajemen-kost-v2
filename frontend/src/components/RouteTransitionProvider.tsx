@@ -28,9 +28,10 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
   const [isVisible, setIsVisible] = useState(true);
   const [isInitialMount, setIsInitialMount] = useState(true);
   
-  // showSplash default true jika di /login. Pada F5 di halaman lain (/),
-  // kita ubah ke true via useEffect jika user ternyata tidak terautentikasi (akan diredirect ke login).
-  const [showSplash, setShowSplash] = useState(pathname === "/login");
+  // Menentukan tipe loader yang aktif: "splash" untuk WelcomeScreen, "house" untuk HouseLoader
+  const [loaderType, setLoaderType] = useState<"splash" | "house">(
+    pathname === "/login" ? "splash" : "house"
+  );
   
   const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startTimeRef = useRef<number>(0);
@@ -40,7 +41,7 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
     // Deteksi auth instan di client side untuk mencegah flash HouseLoader jika diredirect ke /login
     const isAuth = sessionStorage.getItem("isAuth") || localStorage.getItem("isAuth");
     if (!isAuth) {
-      setShowSplash(true);
+      setLoaderType("splash");
     }
 
     const timeout = setTimeout(() => {
@@ -50,7 +51,6 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
       setTimeout(() => {
         setIsTransitioning(false);
         setIsInitialMount(false);
-        setShowSplash(false);
       }, 300);
     }, 1500); // Garansi 1.5 detik F5
     return () => clearTimeout(timeout);
@@ -76,9 +76,11 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
   const startTransition = useCallback(() => {
     if (fadeOutTimerRef.current) clearTimeout(fadeOutTimerRef.current);
     startTimeRef.current = Date.now();
+    // Kunci tipe loader di awal transisi berdasarkan halaman asal sebelum pindah
+    setLoaderType(pathname === "/login" ? "splash" : "house");
     setIsTransitioning(true);
     setIsVisible(true);
-  }, []);
+  }, [pathname]);
 
   const stopTransition = useCallback(() => {
     setIsVisible(false);
@@ -98,7 +100,7 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
             pointerEvents: isVisible ? "auto" : "none",
           }}
         >
-          {showSplash || pathname === "/login" ? (
+          {loaderType === "splash" ? (
             <WelcomeScreen isVisible={isVisible} />
           ) : (
             <HouseLoader />
