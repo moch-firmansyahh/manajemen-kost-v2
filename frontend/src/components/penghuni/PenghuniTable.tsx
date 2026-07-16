@@ -23,8 +23,8 @@ export const PenghuniTable = ({ data, dataKamar, onEdit, onDelete, onCheckout }:
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
-      <Table className="min-w-[600px]">
-        <TableHeader className="bg-muted/50">
+      <Table className="min-w-[600px]" containerClassName="max-h-[444px]">
+        <TableHeader className="bg-muted">
           <TableRow>
             <TableHead>Nama</TableHead>
             <TableHead>Kamar</TableHead>
@@ -60,8 +60,8 @@ export const PenghuniTable = ({ data, dataKamar, onEdit, onDelete, onCheckout }:
                       <LogOut className="h-4 w-4" />
                     </Button>
                   )}
-                  <Button variant="ghost" size="icon" asChild className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/50">
-                    <Link href={`/penghuni/${penghuni.id}`} prefetch={true}>
+                  <Button variant="ghost" size="icon" asChild className="text-primary hover:bg-primary/10 dark:hover:bg-primary/20">
+                    <Link href={`/penghuni/${penghuni.id}`}>
                       <Eye className="h-4 w-4" />
                     </Link>
                   </Button>

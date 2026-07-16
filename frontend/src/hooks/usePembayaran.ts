@@ -76,13 +76,30 @@ export const usePembayaran = () => {
     notifyListeners(globalDataPembayaran.filter(p => p.id !== id));
   };
 
+  const deletePembayaranByPenghuniId = async (penghuniId: string) => {
+    try {
+      const related = globalDataPembayaran.filter(p => p.penghuniId === penghuniId);
+      await Promise.all(related.map(p => fetch(`${API_URL}/${p.id}`, { method: 'DELETE' })));
+      notifyListeners(globalDataPembayaran.filter(p => p.penghuniId !== penghuniId));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return {
     dataPembayaran,
     isLoading,
+    error: null,
     getPembayaranById,
     addPembayaran,
     updatePembayaran,
     deletePembayaran,
+    ambilPembayaranSesuaiId: getPembayaranById,
+    tambahPembayaran: addPembayaran,
+    perbaruiPembayaran: updatePembayaran,
+    hapusPembayaran: deletePembayaran,
+    hapusPembayaranSesuaiIdPenghuni: deletePembayaranByPenghuniId,
+    refresh: refetchPembayaranData,
   };
 };
 

@@ -15,25 +15,25 @@ export default function PembayaranDetailPage({ params }: { params: Promise<{ id:
   const resolvedParams = use(params);
   const id = resolvedParams.id;
   
-  const { getPembayaranById } = usePembayaran();
-  const { getPenghuniById } = usePenghuni();
-  const { getKamarById } = useKamar();
+  const { ambilPembayaranSesuaiId } = usePembayaran();
+  const { ambilPenghuniSesuaiId } = usePenghuni();
+  const { ambilKamarSesuaiId } = useKamar();
 
-  const pembayaran = getPembayaranById(id);
+  const pembayaran = ambilPembayaranSesuaiId(id);
   
   if (!pembayaran) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
         <h2 className="text-xl font-semibold text-muted-foreground">Pembayaran tidak ditemukan</h2>
         <Button variant="link" asChild className="mt-4">
-          <Link href="/pembayaran">Kembali ke Daftar Pembayaran</Link>
+        <Link href="/pembayaran">Kembali ke Daftar Pembayaran</Link>
         </Button>
       </div>
     );
   }
 
-  const penghuni = getPenghuniById(pembayaran.penghuniId);
-  const kamar = getKamarById(pembayaran.kamarId);
+  const penghuni = ambilPenghuniSesuaiId(pembayaran.penghuniId);
+  const kamar = ambilKamarSesuaiId(pembayaran.kamarId);
 
   return (
     <div className="space-y-6">
@@ -43,6 +43,7 @@ export default function PembayaranDetailPage({ params }: { params: Promise<{ id:
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Detail Pembayaran</h1>
+          <p className="text-muted-foreground mt-1">ID Tagihan: #{pembayaran.id.padStart(6, '0')}</p>
         </div>
       </div>
 
@@ -52,7 +53,7 @@ export default function PembayaranDetailPage({ params }: { params: Promise<{ id:
             <StatusBadge status={pembayaran.status} className="text-sm px-3 py-1" />
           </div>
           <CardHeader>
-            <div className="flex items-center text-blue-600 dark:text-blue-400 mb-2">
+            <div className="flex items-center text-primary mb-2">
               <ReceiptText className="h-5 w-5 mr-2" />
               <CardTitle className="text-lg text-foreground">Ringkasan Tagihan</CardTitle>
             </div>
@@ -83,7 +84,7 @@ export default function PembayaranDetailPage({ params }: { params: Promise<{ id:
           <Card className="border-border shadow-sm">
             <CardHeader>
               <div className="flex items-center text-foreground">
-                <User className="h-5 w-5 mr-2 text-blue-500" />
+                <User className="h-5 w-5 mr-2 text-primary" />
                 <CardTitle className="text-lg">Informasi Penghuni</CardTitle>
               </div>
             </CardHeader>

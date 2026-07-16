@@ -18,6 +18,7 @@ export interface Penghuni {
   nama: string;
   nik: string;
   noTelepon: string;
+  email?: string;
   kamarId: string;
   tanggalMasuk: string;
   tanggalKeluar: string | null;

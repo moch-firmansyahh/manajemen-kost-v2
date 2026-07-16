@@ -76,12 +76,28 @@ export const usePenghuni = () => {
     await refetchPembayaranData();
   };
 
+  const refresh = async () => {
+    try {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      notifyListeners(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return {
     dataPenghuni,
     isLoading,
+    error: null,
     getPenghuniById,
     addPenghuni,
     updatePenghuni,
     deletePenghuni,
+    ambilPenghuniSesuaiId: getPenghuniById,
+    tambahPenghuni: addPenghuni,
+    perbaruiPenghuni: updatePenghuni,
+    hapusPenghuni: deletePenghuni,
+    refresh,
   };
 };

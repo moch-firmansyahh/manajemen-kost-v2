@@ -42,15 +42,20 @@ export default function Dashboard() {
     })
     .reduce((acc, curr) => acc + curr.jumlah, 0);
 
-  const unpaidPembayaran = dataPembayaran.filter(p => p.status === "terlambat");
+  const unpaidPembayaran = dataPembayaran
+    .filter(p => p.status === "terlambat")
+    .sort((a, b) => {
+      const nameA = dataPenghuni.find(pen => pen.id === a.penghuniId)?.nama || "";
+      const nameB = dataPenghuni.find(pen => pen.id === b.penghuniId)?.nama || "";
+      return nameA.localeCompare(nameB, 'id');
+    });
 
   const penghuniTerbaru = dataPenghuni
     .filter(p => {
       const tglMasuk = new Date(p.tanggalMasuk);
       return tglMasuk.getMonth() === currentMonthIndex && tglMasuk.getFullYear() === currentYear;
     })
-    .sort((a, b) => new Date(b.tanggalMasuk).getTime() - new Date(a.tanggalMasuk).getTime())
-    .slice(0, 5);
+    .sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
 
   return (
     <div className="space-y-8">
@@ -114,66 +119,80 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 {penghuniTerbaru.length > 0 ? (
-                  <Table className="min-w-[400px]">
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nama</TableHead>
-                        <TableHead>Kamar</TableHead>
-                        <TableHead>Tgl Masuk</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {penghuniTerbaru.map((penghuni) => {
-                        const kamar = dataKamar.find(k => k.id === penghuni.kamarId);
-                        return (
-                          <TableRow key={penghuni.id}>
-                            <TableCell className="font-medium text-foreground">{penghuni.nama}</TableCell>
-                            <TableCell className="text-muted-foreground">{kamar ? kamar.nomorKamar : "-"}</TableCell>
-                            <TableCell className="text-muted-foreground">{formatDate(penghuni.tanggalMasuk)}</TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
+                  <div className="max-h-[300px] overflow-y-auto pr-1">
+                    <Table className="min-w-[400px]">
+                      <TableHeader className="sticky top-0 bg-card z-10">
+                        <TableRow>
+                          <TableHead className="bg-card">Nama</TableHead>
+                          <TableHead className="bg-card">Kamar</TableHead>
+                          <TableHead className="bg-card">Tgl Masuk</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {penghuniTerbaru.map((penghuni) => {
+                          const kamar = dataKamar.find(k => k.id === penghuni.kamarId);
+                          return (
+                            <TableRow key={penghuni.id}>
+                              <TableCell className="font-medium text-foreground">{penghuni.nama}</TableCell>
+                              <TableCell className="text-muted-foreground">{kamar ? kamar.nomorKamar : "-"}</TableCell>
+                              <TableCell className="text-muted-foreground">{formatDate(penghuni.tanggalMasuk)}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
                 ) : (
                   <div className="text-center py-6 text-muted-foreground">Belum ada data penghuni</div>
                 )}
               </CardContent>
             </Card>
-
+ 
             <Card className="border-border shadow-sm">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-foreground">Tagihan Belum Lunas</CardTitle>
               </CardHeader>
               <CardContent>
                 {unpaidPembayaran.length > 0 ? (
-                  <Table className="min-w-[400px]">
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Penghuni</TableHead>
-                        <TableHead>Bulan</TableHead>
-                        <TableHead>Jumlah</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {unpaidPembayaran.slice(0, 5).map((bayar) => {
-                        const penghuni = dataPenghuni.find(p => p.id === bayar.penghuniId);
-                        return (
-                          <TableRow key={bayar.id}>
-                            <TableCell className="font-medium text-foreground">{penghuni ? penghuni.nama : "-"}</TableCell>
-                            <TableCell className="text-muted-foreground">{bayar.bulan}</TableCell>
-                            <TableCell className="text-muted-foreground">{formatRupiah(bayar.jumlah)}</TableCell>
-                            <TableCell>
-                              <Badge variant="destructive" className="bg-destructive/10 text-destructive hover:bg-destructive/20 border-none">
-                                {bayar.status.replace("_", " ")}
-                              </Badge>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
+                  <div className="max-h-[300px] overflow-y-auto pr-1">
+                    <Table className="min-w-[400px]">
+                      <TableHeader className="sticky top-0 bg-card z-10">
+                        <TableRow>
+                          <TableHead className="bg-card">Penghuni</TableHead>
+                          <TableHead className="bg-card">Kamar</TableHead>
+                          <TableHead className="bg-card">Bulan</TableHead>
+                          <TableHead className="bg-card">Jumlah</TableHead>
+                          <TableHead className="bg-card">Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {unpaidPembayaran.map((bayar) => {
+                          const penghuni = dataPenghuni.find(p => p.id === bayar.penghuniId);
+                          const kamar = dataKamar.find(k => k.id === bayar.kamarId);
+                          return (
+                            <TableRow key={bayar.id}>
+                              <TableCell className="font-medium text-foreground">{penghuni ? penghuni.nama : "-"}</TableCell>
+                              <TableCell className="text-muted-foreground">{kamar ? kamar.nomorKamar : "-"}</TableCell>
+                              <TableCell className="text-muted-foreground">{bayar.bulan}</TableCell>
+                              <TableCell className="text-muted-foreground">{formatRupiah(bayar.jumlah)}</TableCell>
+                              <TableCell>
+                                <Badge 
+                                  variant="destructive" 
+                                  className={
+                                    bayar.status === "terlambat"
+                                      ? "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 border-rose-200 dark:border-rose-500/30"
+                                      : "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 border-amber-200 dark:border-amber-500/30"
+                                  }
+                                >
+                                  {bayar.status.replace("_", " ")}
+                                </Badge>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
                 ) : (
                   <div className="text-center py-6 text-muted-foreground">Semua tagihan sudah lunas 🎉</div>
                 )}

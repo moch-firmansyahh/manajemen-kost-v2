@@ -88,9 +88,15 @@ export const useKamar = () => {
   return {
     dataKamar,
     isLoading,
+    error: null,
     getKamarById,
     addKamar,
     updateKamar,
     deleteKamar,
+    ambilKamarSesuaiId: getKamarById,
+    tambahKamar: addKamar,
+    perbaruiKamar: updateKamar,
+    hapusKamar: deleteKamar,
+    refresh: refetchKamarData,
   };
 };

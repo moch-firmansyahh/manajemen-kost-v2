@@ -144,7 +144,7 @@ export const KamarForm = ({ isOpen, onClose, onSubmit, initialData }: KamarFormP
 
           <div className="pt-4 flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={onClose}>Batal</Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Simpan</Button>
+            <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90">Simpan</Button>
           </div>
         </form>
       </DialogContent>

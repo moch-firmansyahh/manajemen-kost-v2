@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePembayaran } from '@/hooks/usePembayaran';
+import { usePembayaran, refetchPembayaranData } from '@/hooks/usePembayaran';
 import { usePenghuni } from '@/hooks/usePenghuni';
 import { API_BASE_URL } from '@/lib/utils';
 import {
@@ -28,11 +28,17 @@ export const Navbar = ({ toggleSidebar }: NavbarProps) => {
   const { dataPembayaran } = usePembayaran();
   const { dataPenghuni } = usePenghuni();
 
-  const latePembayaran = dataPembayaran.filter(p => {
-    if (p.status !== 'terlambat') return false;
-    const penghuni = dataPenghuni.find(pen => pen.id === p.penghuniId);
-    return !!penghuni; // Selama penghuninya valid, tampilkan notifikasi (meskipun sudah keluar)
-  });
+  const latePembayaran = dataPembayaran
+    .filter(p => {
+      if (p.status !== 'terlambat') return false;
+      const penghuni = dataPenghuni.find(pen => pen.id === p.penghuniId);
+      return !!penghuni; // Selama penghuninya valid, tampilkan notifikasi (meskipun sudah keluar)
+    })
+    .sort((a, b) => {
+      const nameA = dataPenghuni.find(pen => pen.id === a.penghuniId)?.nama || "";
+      const nameB = dataPenghuni.find(pen => pen.id === b.penghuniId)?.nama || "";
+      return nameA.localeCompare(nameB, 'id');
+    });
 
   useEffect(() => {
     setMounted(true);
@@ -60,8 +66,14 @@ export const Navbar = ({ toggleSidebar }: NavbarProps) => {
       if (updated) setAdminName(updated);
     };
 
+    // Auto-refresh notifications by polling every 5s
+    const intervalId = setInterval(() => {
+      refetchPembayaranData();
+    }, 5000);
+
     window.addEventListener("storage", handleStorageChange);
     return () => {
+      clearInterval(intervalId);
       window.removeEventListener("storage", handleStorageChange);
     };
   }, []);

@@ -7,7 +7,7 @@ import { usePembayaran } from "@/hooks/usePembayaran";
 import { formatDate, formatRupiah } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Phone, CreditCard, CalendarDays, Filter } from "lucide-react";
+import { ArrowLeft, User, Phone, Mail, CreditCard, CalendarDays, Filter } from "lucide-react";
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +17,11 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
   const resolvedParams = use(params);
   const id = resolvedParams.id;
   
-  const { getPenghuniById } = usePenghuni();
-  const { getKamarById } = useKamar();
+  const { ambilPenghuniSesuaiId } = usePenghuni();
+  const { ambilKamarSesuaiId } = useKamar();
   const { dataPembayaran } = usePembayaran();
 
-  const penghuni = getPenghuniById(id);
+  const penghuni = ambilPenghuniSesuaiId(id);
   
   const currentYear = new Date().getFullYear().toString();
   const [filterTahun, setFilterTahun] = useState<string>(currentYear);
@@ -31,13 +31,13 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
       <div className="flex flex-col items-center justify-center h-64">
         <h2 className="text-xl font-semibold text-muted-foreground">Penghuni tidak ditemukan</h2>
         <Button variant="link" asChild className="mt-4">
-          <Link href="/penghuni">Kembali ke Daftar Penghuni</Link>
+        <Link href="/penghuni">Kembali ke Daftar Penghuni</Link>
         </Button>
       </div>
     );
   }
 
-  const kamar = getKamarById(penghuni.kamarId);
+  const kamar = ambilKamarSesuaiId(penghuni.kamarId);
   const allRiwayat = dataPembayaran.filter(p => p.penghuniId === id);
   
   const availableYears = Array.from(
@@ -62,10 +62,10 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="border-border shadow-sm lg:col-span-1 bg-gradient-to-b from-blue-50/50 to-background dark:from-blue-950/20">
+        <Card className="border-border shadow-sm lg:col-span-1 bg-gradient-to-b from-primary/5 to-background dark:from-primary/10">
           <CardHeader>
             <div className="flex flex-col items-center">
-              <div className="h-24 w-24 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 shadow-sm">
+              <div className="h-24 w-24 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-primary-foreground mb-4 shadow-sm">
                 <User className="h-10 w-10" />
               </div>
               <CardTitle className="text-xl">{penghuni.nama}</CardTitle>
@@ -82,6 +82,10 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
             <div className="flex items-center text-sm text-foreground">
               <Phone className="h-4 w-4 mr-3 text-muted-foreground" />
               <span>{penghuni.noTelepon}</span>
+            </div>
+            <div className="flex items-center text-sm text-foreground">
+              <Mail className="h-4 w-4 mr-3 text-muted-foreground" />
+              <span>{penghuni.email}</span>
             </div>
             <div className="flex items-center text-sm text-foreground">
               <CalendarDays className="h-4 w-4 mr-3 text-muted-foreground" />

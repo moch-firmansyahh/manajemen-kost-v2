@@ -21,8 +21,8 @@ export const KamarTable = ({ data, onEdit, onDelete }: KamarTableProps) => {
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
-      <Table className="min-w-[600px]">
-        <TableHeader className="bg-muted/50">
+      <Table className="min-w-[600px]" containerClassName="max-h-[444px]">
+        <TableHeader className="bg-muted">
           <TableRow>
             <TableHead className="w-[100px]">No. Kamar</TableHead>
             <TableHead>Tipe</TableHead>
@@ -41,8 +41,8 @@ export const KamarTable = ({ data, onEdit, onDelete }: KamarTableProps) => {
                 <KamarBadge status={kamar.status} />
               </TableCell>
               <TableCell className="text-right space-x-2">
-                <Button variant="ghost" size="icon" asChild className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/50">
-                  <Link href={`/kamar/${kamar.id}`} prefetch={true}>
+                <Button variant="ghost" size="icon" asChild className="text-primary hover:bg-primary/10 dark:hover:bg-primary/20">
+                  <Link href={`/kamar/${kamar.id}`}>
                     <Eye className="h-4 w-4" />
                   </Link>
                 </Button>

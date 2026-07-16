@@ -17,33 +17,25 @@ export default function KamarDetailPage({ params }: { params: Promise<{ id: stri
   const resolvedParams = use(params);
   const id = resolvedParams.id;
   
-  const { getKamarById } = useKamar();
+  const { ambilKamarSesuaiId } = useKamar();
   const { dataPenghuni } = usePenghuni();
   const { dataPembayaran } = usePembayaran();
 
-  const kamar = getKamarById(id);
+  const kamar = ambilKamarSesuaiId(id);
   
   if (!kamar) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
         <h2 className="text-xl font-semibold text-muted-foreground">Kamar tidak ditemukan</h2>
         <Button variant="link" asChild className="mt-4">
-          <Link href="/kamar">Kembali ke Daftar Kamar</Link>
+        <Link href="/kamar">Kembali ke Daftar Kamar</Link>
         </Button>
       </div>
     );
   }
 
-  // Mencari penghuni yang saat ini menempati kamar (belum keluar)
-  const activePenghuni = dataPenghuni.find(p => p.kamarId === id && p.tanggalKeluar === null);
-  
-  // Tampilkan data penghuni hanya jika ada penghuni aktif
-  const penghuniKamar = activePenghuni ? [activePenghuni] : [];
-  
-  // Tampilkan riwayat pembayaran hanya untuk penghuni aktif tersebut
-  const riwayatPembayaran = activePenghuni 
-    ? dataPembayaran.filter(p => p.kamarId === id && p.penghuniId === activePenghuni.id) 
-    : [];
+  const penghuniKamar = dataPenghuni.filter(p => p.kamarId === id);
+  const riwayatPembayaran = dataPembayaran.filter(p => p.kamarId === id);
 
   return (
     <div className="space-y-6">
@@ -96,7 +88,7 @@ export default function KamarDetailPage({ params }: { params: Promise<{ id: stri
         <div className="lg:col-span-2 space-y-6">
           <Card className="border-border shadow-sm">
             <CardHeader>
-              <CardTitle>Penghuni</CardTitle>
+              <CardTitle>Riwayat Penghuni</CardTitle>
             </CardHeader>
             <CardContent>
               {penghuniKamar.length > 0 ? (
@@ -127,7 +119,7 @@ export default function KamarDetailPage({ params }: { params: Promise<{ id: stri
                   </TableBody>
                 </Table>
               ) : (
-                <div className="text-center py-6 text-muted-foreground">Belum ada penghuni</div>
+                <div className="text-center py-6 text-muted-foreground">Belum ada riwayat penghuni</div>
               )}
             </CardContent>
           </Card>

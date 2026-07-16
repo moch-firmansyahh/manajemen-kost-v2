@@ -20,6 +20,7 @@ const DEFAULT_STATE = {
   nama: "",
   nik: "",
   noTelepon: "",
+  email: "",
   kamarId: "",
   tanggalMasuk: new Date().toISOString().split('T')[0],
   tanggalKeluar: null as string | null,
@@ -35,6 +36,7 @@ export const PenghuniForm = ({ isOpen, onClose, onSubmit, initialData, dataKamar
         nama: initialData.nama,
         nik: initialData.nik,
         noTelepon: initialData.noTelepon,
+        email: initialData.email || "",
         kamarId: initialData.kamarId,
         tanggalMasuk: initialData.tanggalMasuk.split('T')[0],
         tanggalKeluar: initialData.tanggalKeluar ? initialData.tanggalKeluar.split('T')[0] : null,
@@ -92,7 +94,16 @@ export const PenghuniForm = ({ isOpen, onClose, onSubmit, initialData, dataKamar
             </div>
           </div>
 
-
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="kamarId">Kamar</Label>
@@ -117,20 +128,31 @@ export const PenghuniForm = ({ isOpen, onClose, onSubmit, initialData, dataKamar
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="tanggalMasuk">Tanggal Masuk</Label>
-            <Input
-              id="tanggalMasuk"
-              type="date"
-              required
-              value={formData.tanggalMasuk}
-              onChange={(e) => setFormData({ ...formData, tanggalMasuk: e.target.value })}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="tanggalMasuk">Tanggal Masuk</Label>
+              <Input
+                id="tanggalMasuk"
+                type="date"
+                required
+                value={formData.tanggalMasuk}
+                onChange={(e) => setFormData({ ...formData, tanggalMasuk: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tanggalKeluar">Tanggal Keluar (Opsional)</Label>
+              <Input
+                id="tanggalKeluar"
+                type="date"
+                value={formData.tanggalKeluar || ""}
+                onChange={(e) => setFormData({ ...formData, tanggalKeluar: e.target.value || null })}
+              />
+            </div>
           </div>
 
           <div className="pt-4 flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={onClose}>Batal</Button>
-            <Button type="submit" className="bg-[#567134] hover:bg-[#455b2a] text-white">Simpan</Button>
+            <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90">Simpan</Button>
           </div>
         </form>
       </DialogContent>
