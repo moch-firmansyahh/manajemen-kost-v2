@@ -48,14 +48,16 @@ export default function Dashboard() {
       const nameA = dataPenghuni.find(pen => pen.id === a.penghuniId)?.nama || "";
       const nameB = dataPenghuni.find(pen => pen.id === b.penghuniId)?.nama || "";
       return nameA.localeCompare(nameB, 'id');
-    });
+    })
+    .slice(0, 4);
 
   const penghuniTerbaru = dataPenghuni
     .filter(p => {
       const tglMasuk = new Date(p.tanggalMasuk);
       return tglMasuk.getMonth() === currentMonthIndex && tglMasuk.getFullYear() === currentYear;
     })
-    .sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
+    .sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
+    .slice(0, 4);
 
   return (
     <div className="space-y-8">
