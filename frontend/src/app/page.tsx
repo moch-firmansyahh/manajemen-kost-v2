@@ -48,16 +48,14 @@ export default function Dashboard() {
       const nameA = dataPenghuni.find(pen => pen.id === a.penghuniId)?.nama || "";
       const nameB = dataPenghuni.find(pen => pen.id === b.penghuniId)?.nama || "";
       return nameA.localeCompare(nameB, 'id');
-    })
-    .slice(0, 4);
+    });
 
   const penghuniTerbaru = dataPenghuni
     .filter(p => {
       const tglMasuk = new Date(p.tanggalMasuk);
       return tglMasuk.getMonth() === currentMonthIndex && tglMasuk.getFullYear() === currentYear;
     })
-    .sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
-    .slice(0, 4);
+    .sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
 
   return (
     <div className="space-y-8">
@@ -121,7 +119,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 {penghuniTerbaru.length > 0 ? (
-                  <div className="max-h-[300px] overflow-y-auto pr-1">
+                  <div className="h-[242px] overflow-y-auto pr-1 snap-y snap-mandatory scroll-smooth">
                     <Table className="min-w-[400px]">
                       <TableHeader className="sticky top-0 bg-card z-10">
                         <TableRow>
@@ -134,7 +132,7 @@ export default function Dashboard() {
                         {penghuniTerbaru.map((penghuni) => {
                           const kamar = dataKamar.find(k => k.id === penghuni.kamarId);
                           return (
-                            <TableRow key={penghuni.id}>
+                            <TableRow key={penghuni.id} className="snap-start snap-always">
                               <TableCell className="font-medium text-foreground">{penghuni.nama}</TableCell>
                               <TableCell className="text-muted-foreground">{kamar ? kamar.nomorKamar : "-"}</TableCell>
                               <TableCell className="text-muted-foreground">{formatDate(penghuni.tanggalMasuk)}</TableCell>
@@ -156,7 +154,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 {unpaidPembayaran.length > 0 ? (
-                  <div className="max-h-[300px] overflow-y-auto pr-1">
+                  <div className="h-[242px] overflow-y-auto pr-1 snap-y snap-mandatory scroll-smooth">
                     <Table className="min-w-[400px]">
                       <TableHeader className="sticky top-0 bg-card z-10">
                         <TableRow>
@@ -172,7 +170,7 @@ export default function Dashboard() {
                           const penghuni = dataPenghuni.find(p => p.id === bayar.penghuniId);
                           const kamar = dataKamar.find(k => k.id === bayar.kamarId);
                           return (
-                            <TableRow key={bayar.id}>
+                            <TableRow key={bayar.id} className="snap-start snap-always">
                               <TableCell className="font-medium text-foreground">{penghuni ? penghuni.nama : "-"}</TableCell>
                               <TableCell className="text-muted-foreground">{kamar ? kamar.nomorKamar : "-"}</TableCell>
                               <TableCell className="text-muted-foreground">{bayar.bulan}</TableCell>
