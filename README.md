@@ -2,8 +2,6 @@
 
 Aplikasi Web Manajemen Kost digital berbasis **Next.js 15 (App Router)** dan **Express.js + Prisma ORM + PostgreSQL/Supabase** untuk membantu pemilik kost mengelola kamar, data penghuni, dan pencatatan riwayat pembayaran bulanan secara digital, efisien, dan otomatis.
 
-Proyek ini dibuat sebagai syarat penyelesaian **Tugas Besar CCI Frontend Web Development 2026**.
-
 ---
 
 ## 🛠️ Tech Stack & Arsitektur
