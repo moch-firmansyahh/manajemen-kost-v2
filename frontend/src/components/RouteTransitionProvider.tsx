@@ -21,14 +21,18 @@ export function useTransitionContext() {
 }
 
 export function RouteTransitionProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   // Aktifkan secara default agar muncul saat pertama kali aplikasi dimuat (F5)
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
   const [isInitialMount, setIsInitialMount] = useState(true);
+  
+  // showSplash hanya true jika aplikasi pertama kali dimuat di halaman login
+  const [showSplash, setShowSplash] = useState(pathname === "/login");
+  
   const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startTimeRef = useRef<number>(0);
-
-  const pathname = usePathname();
 
   // Menangani penayangan saat initial mount
   React.useEffect(() => {
@@ -39,6 +43,7 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
       setTimeout(() => {
         setIsTransitioning(false);
         setIsInitialMount(false);
+        setShowSplash(false);
       }, 300);
     }, 1500); // Garansi 1.5 detik F5
     return () => clearTimeout(timeout);
@@ -86,7 +91,7 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
             pointerEvents: isVisible ? "auto" : "none",
           }}
         >
-          {isInitialMount && pathname === "/login" ? (
+          {showSplash ? (
             <WelcomeScreen isVisible={isVisible} />
           ) : (
             <HouseLoader />
