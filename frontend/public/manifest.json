@@ -9,7 +9,7 @@
   "theme_color": "#567134",
   "icons": [
     {
-      "src": "/Logo-Kost.png",
+      "src": "/Logo-Kost-Square.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
