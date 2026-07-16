@@ -26,6 +26,7 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
   const [isVisible, setIsVisible] = useState(true);
   const [isInitialMount, setIsInitialMount] = useState(true);
   const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const startTimeRef = useRef<number>(0);
 
   const pathname = usePathname();
 
@@ -43,20 +44,26 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
     return () => clearTimeout(timeout);
   }, []);
 
-  // Mematikan loading screen HANYA JIKA halaman benar-benar sudah selesai berpindah
+  // Mematikan loading screen HANYA JIKA halaman benar-benar sudah selesai berpindah dan durasi minimum 1.5 detik tercapai
   React.useEffect(() => {
     if (!isInitialMount) {
-      // Fade out dulu, lalu unmount
-      setIsVisible(false);
+      const elapsed = Date.now() - startTimeRef.current;
+      const remaining = Math.max(0, 1500 - elapsed);
+
       if (fadeOutTimerRef.current) clearTimeout(fadeOutTimerRef.current);
+
       fadeOutTimerRef.current = setTimeout(() => {
-        setIsTransitioning(false);
-      }, 300);
+        setIsVisible(false);
+        fadeOutTimerRef.current = setTimeout(() => {
+          setIsTransitioning(false);
+        }, 300);
+      }, remaining);
     }
   }, [pathname]);
 
   const startTransition = useCallback(() => {
     if (fadeOutTimerRef.current) clearTimeout(fadeOutTimerRef.current);
+    startTimeRef.current = Date.now();
     setIsTransitioning(true);
     setIsVisible(true);
   }, []);
