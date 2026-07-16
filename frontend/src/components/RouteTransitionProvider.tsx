@@ -28,14 +28,21 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
   const [isVisible, setIsVisible] = useState(true);
   const [isInitialMount, setIsInitialMount] = useState(true);
   
-  // showSplash hanya true jika aplikasi pertama kali dimuat di halaman login
+  // showSplash default true jika di /login. Pada F5 di halaman lain (/),
+  // kita ubah ke true via useEffect jika user ternyata tidak terautentikasi (akan diredirect ke login).
   const [showSplash, setShowSplash] = useState(pathname === "/login");
   
   const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startTimeRef = useRef<number>(0);
 
-  // Menangani penayangan saat initial mount
+  // Menangani penayangan saat initial mount & deteksi auth instan
   React.useEffect(() => {
+    // Deteksi auth instan di client side untuk mencegah flash HouseLoader jika diredirect ke /login
+    const isAuth = sessionStorage.getItem("isAuth") || localStorage.getItem("isAuth");
+    if (!isAuth) {
+      setShowSplash(true);
+    }
+
     const timeout = setTimeout(() => {
       // Mulai fade out
       setIsVisible(false);
@@ -91,7 +98,7 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
             pointerEvents: isVisible ? "auto" : "none",
           }}
         >
-          {showSplash ? (
+          {showSplash || pathname === "/login" ? (
             <WelcomeScreen isVisible={isVisible} />
           ) : (
             <HouseLoader />
