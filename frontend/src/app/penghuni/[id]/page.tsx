@@ -7,7 +7,7 @@ import { usePembayaran } from "@/hooks/usePembayaran";
 import { formatDate, formatRupiah } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Phone, Mail, CreditCard, CalendarDays, Filter } from "lucide-react";
+import { ArrowLeft, User, Phone, CreditCard, CalendarDays, Filter } from "lucide-react";
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -82,10 +82,6 @@ export default function PenghuniDetailPage({ params }: { params: Promise<{ id: s
             <div className="flex items-center text-sm text-foreground">
               <Phone className="h-4 w-4 mr-3 text-muted-foreground" />
               <span>{penghuni.noTelepon}</span>
-            </div>
-            <div className="flex items-center text-sm text-foreground">
-              <Mail className="h-4 w-4 mr-3 text-muted-foreground" />
-              <span>{penghuni.email}</span>
             </div>
             <div className="flex items-center text-sm text-foreground">
               <CalendarDays className="h-4 w-4 mr-3 text-muted-foreground" />
