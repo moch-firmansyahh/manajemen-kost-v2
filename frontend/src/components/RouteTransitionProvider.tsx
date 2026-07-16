@@ -28,22 +28,14 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
   const [isVisible, setIsVisible] = useState(true);
   const [isInitialMount, setIsInitialMount] = useState(true);
   
-  // Menentukan tipe loader yang aktif: "splash" untuk WelcomeScreen, "house" untuk HouseLoader
-  const [loaderType, setLoaderType] = useState<"splash" | "house">(
-    pathname === "/login" ? "splash" : "house"
-  );
+  // Cold start SELALU Welcome Screen. Hanya startTransition() yang mengubah ke "house".
+  const [loaderType, setLoaderType] = useState<"splash" | "house">("splash");
   
   const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startTimeRef = useRef<number>(0);
 
-  // Menangani penayangan saat initial mount & deteksi auth instan
+  // Menangani penayangan saat initial mount (cold start = Welcome Screen 1.5 detik)
   React.useEffect(() => {
-    // Deteksi auth instan di client side untuk mencegah flash HouseLoader jika diredirect ke /login
-    const isAuth = sessionStorage.getItem("isAuth") || localStorage.getItem("isAuth");
-    if (!isAuth) {
-      setLoaderType("splash");
-    }
-
     const timeout = setTimeout(() => {
       // Mulai fade out
       setIsVisible(false);
