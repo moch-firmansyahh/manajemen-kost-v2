@@ -76,11 +76,12 @@ export function RouteTransitionProvider({ children }: { children: React.ReactNod
   const startTransition = useCallback(() => {
     if (fadeOutTimerRef.current) clearTimeout(fadeOutTimerRef.current);
     startTimeRef.current = Date.now();
-    // Kunci tipe loader di awal transisi berdasarkan halaman asal sebelum pindah
-    setLoaderType(pathname === "/login" ? "splash" : "house");
+    // Semua navigasi yang dipicu user (klik Login, klik menu) SELALU pakai House Loader.
+    // Welcome Screen (splash) HANYA untuk cold start / F5 pertama kali.
+    setLoaderType("house");
     setIsTransitioning(true);
     setIsVisible(true);
-  }, [pathname]);
+  }, []);
 
   const stopTransition = useCallback(() => {
     setIsVisible(false);
