@@ -25,7 +25,7 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   return (
     <aside 
       className={cn(
-        "bg-card border-r border-border flex flex-col h-screen fixed top-0 left-0 z-30 transition-transform duration-300 ease-in-out w-64",
+        "bg-card border-r border-border flex flex-col h-screen fixed top-0 left-0 z-50 transition-transform duration-300 ease-in-out w-64",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >

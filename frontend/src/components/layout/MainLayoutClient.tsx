@@ -46,7 +46,7 @@ export const MainLayoutClient = ({ children }: { children: React.ReactNode }) =>
       {/* Overlay untuk mobile saat sidebar terbuka */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
