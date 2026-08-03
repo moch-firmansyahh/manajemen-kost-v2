@@ -1,214 +1,211 @@
 <div align="center">
 
 # 🏠 Kontrakan Pa Iman
+### *Sistem Manajemen Kost Digital Modern & Responsif*
 
-### Sistem Manajemen Kost Digital
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-5.0-000000?style=for-the-badge&logo=express&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deployment-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
-Aplikasi web **full-stack** untuk membantu pemilik kost mengelola kamar, data penghuni, dan pencatatan pembayaran sewa bulanan secara digital, efisien, dan otomatis.
+Aplikasi web **Full-Stack Digital Management** yang dirancang khusus untuk pemilik kost dalam mengelola unit kamar, data penghuni (aktif & alumni), dan pencatatan riwayat pembayaran bulanan secara efisien, terstruktur, dan otomatis.
 
-**[Demo Live](https://manajemen-kost-nine.vercel.app)** · **[Laporkan Bug](https://github.com/moch-firmansyahh/manajemen-kost-v2/issues)**
+[🌐 **Demo Live App**](https://manajemen-kost-nine.vercel.app) · [🐛 **Laporkan Issue / Bug**](https://github.com/moch-firmansyahh/manajemen-kost-v2/issues)
+
+---
 
 </div>
 
----
-
-## 📋 Daftar Isi
-
-- [Tech Stack](#-tech-stack)
-- [Fitur Utama](#-fitur-utama)
-- [Struktur Folder](#-struktur-folder)
-- [Panduan Instalasi](#-panduan-instalasi)
-- [Kredensial Login](#-kredensial-login)
-- [Progressive Web App](#-progressive-web-app-pwa)
-- [Build Produksi](#-build-produksi)
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Teknologi |
-|---|---|
-| **Framework** | Next.js 15 (App Router) |
-| **Bahasa** | TypeScript |
-| **Styling** | Tailwind CSS v4 |
-| **UI Library** | Shadcn UI, Lucide React |
-| **State** | Custom Hooks + Shared Listener Dispatch |
-| **Backend** | Express.js + Node.js |
-| **ORM** | Prisma ORM |
-| **Database** | PostgreSQL (Supabase) |
-| **Deployment** | Vercel |
-| **PWA** | Web App Manifest + Standalone Mode |
+## 📌 Daftar Isi
+- [✨ Fitur Utama](#-fitur-utama)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [📁 Struktur Folder Project](#-struktur-folder-project)
+- [🚀 Panduan Instalasi & Jalankan Lokal](#-panduan-instalasi--jalankan-lokal)
+- [🔑 Kredensial Akses Demo](#-kredensial-akses-demo)
+- [📱 Progressive Web App (PWA)](#-progressive-web-app-pwa)
+- [🏗️ Build & Verifikasi Produksi](#️-build--verifikasi-produksi)
+- [📄 Lisensi & Informasi Tugas](#-lisensi--informasi-tugas)
 
 ---
 
 ## ✨ Fitur Utama
 
-### 📊 Dashboard (`/`)
-- Statistik real-time: total kamar, kamar terisi, kamar kosong, pendapatan bulan berjalan
-- Tabel penghuni terbaru dengan scroll-snap per baris (maks 4 tampil)
-- Tabel tagihan belum lunas dengan scroll-snap per baris (maks 4 tampil)
-- Dropdown notifikasi dengan polling otomatis setiap 5 detik
+### 📊 **Dashboard Utama (`/`)**
+- **Ringkasan Real-Time**: 4 Stat Card interaktif (Total Kamar, Terisi, Kosong, Estimasi Pendapatan Bulan Ini).
+- **Tabel Penghuni Terbaru**: Daftar penghuni baru masuk dengan baris yang nyaman & teratur.
+- **Tabel Tagihan Pending**: Monitoring otomatis untuk pembayaran sewa yang belum lunas.
+- **Notifikasi Sistem**: Popover notifikasi dengan penanda status & interaksi cepat.
 
-### 🚪 Manajemen Kamar (`/kamar`)
-- Pencarian instan berdasarkan nomor atau tipe kamar
-- Filter berdasarkan status: *Tersedia*, *Terisi*, *Maintenance*
-- Tabel dengan scroll-snap per baris (maks 9 tampil)
-- CRUD lengkap: tambah, edit, hapus kamar
-- Detail kamar (`/kamar/[id]`): riwayat penghuni & pembayaran
+### 🚪 **Manajemen Kamar (`/kamar`)**
+- **Filter & Search**: Pencarian instan via nomor/tipe kamar dan filter status (*Tersedia*, *Terisi*, *Maintenance*).
+- **Operasi CRUD**: Modals form modern untuk Tambah, Edit, dan Hapus unit kamar.
+- **Detail Kamar (`/kamar/[id]`)**: Halaman khusus menampilkan histori lengkap penghuni dan riwayat transaksi sewa kamar tersebut.
 
-### 👥 Manajemen Penghuni (`/penghuni`)
-- Tab filter: Penghuni Aktif & Alumni
-- Pencarian berdasarkan nama & urutan tanggal masuk
-- CRUD lengkap + fitur Checkout (otomatis update status kamar)
-- Detail penghuni (`/penghuni/[id]`): data diri, kamar, riwayat pembayaran
+### 👥 **Manajemen Penghuni (`/penghuni`)**
+- **Pengelompokan Tab**: Tab terpisah untuk **Penghuni Aktif** dan **Alumni**.
+- **Pencarian Nama**: Pencarian cepat penghuni berdasarkan nama atau kamar.
+- **Sistem Checkout**: Fitur checkout penghuni yang secara otomatis meng-update status kamar kembali menjadi *Tersedia*.
+- **Detail Penghuni (`/penghuni/[id]`)**: Profil lengkap, kontak, informasi identitas, dan riwayat tagihan sewa.
 
-### 💳 Manajemen Pembayaran (`/pembayaran`)
-- Pencatatan transaksi pembayaran sewa bulanan
-- Filter berdasarkan status (*Lunas*, *Belum Bayar*, *Terlambat*) & tahun
-- Detail pembayaran (`/pembayaran/[id]`): struk invoice
+### 💳 **Manajemen Pembayaran (`/pembayaran`)**
+- **Pencatatan Transaksi**: Pencatatan tagihan sewa bulanan dengan status (*Lunas*, *Belum Bayar*, *Terlambat*).
+- **Filter Tahun & Status**: Memudahkan pencarian riwayat transaksi berdasarkan periode dan kondisi pembayaran.
+- **Struk Invoice (`/pembayaran/[id]`)**: Halaman detail struk invoice pembayaran yang siap dicetak/diunduh.
 
-### 🎨 UI/UX
-- **Tema Ganda**: Light & Dark mode (default: Light)
-- **Animasi Transisi**: Welcome Screen (cold start) & House Loader (navigasi antar halaman)
-- **Responsive**: Mendukung breakpoint `sm`, `md`, `lg` di semua halaman
-- **PWA**: Dapat diinstal sebagai aplikasi di HP (Android & iOS)
+### 🎨 **Keunggulan UI & UX**
+- **Dual Theme Support**: Mode Gelap (Dark Mode) dan Mode Terang (Light Mode) dengan peralihan mulus.
+- **Animasi & Transisi**: Welcome Screen interaktif saat awal membuka app dan House Loader halus antar navigasi halaman.
+- **Desain Fully Responsive**: Dioptimalkan untuk semua ukuran layar (Mobile, Tablet, Desktop).
 
 ---
 
-## 📁 Struktur Folder
+## 🛠️ Tech Stack
+
+| Layer | Teknologi Utama | Keterangan / Versi |
+|---|---|---|
+| **Frontend Framework** | **Next.js 16** | App Router, React 19, Server & Client Components |
+| **Bahasa Pemrograman** | **TypeScript** | Strict Type Checking di seluruh codebase |
+| **Styling & UI** | **Tailwind CSS v4** | Shadcn UI, Radix UI Primitives, Lucide React Icons |
+| **Theme & UI Effects** | **Next Themes** | Dark / Light Mode Provider & Smooth Animations |
+| **Backend API** | **Express.js 5** | RESTful API Architecture |
+| **ORM & Database** | **Prisma ORM** | PostgreSQL Database (Hosted di Supabase) |
+| **Authentication** | **JWT & Cookie-Based** | Secure Token-Based Authentication Flow |
+| **Deployment** | **Vercel** | Automated Continuous Deployment (Frontend & Backend API) |
+| **PWA Support** | **Web App Manifest** | App Icon, Standalone Display Mode, Mobile Web Installable |
+
+---
+
+## 📁 Struktur Folder Project
 
 ```
 manajemen-kost-v2/
 ├── backend/
 │   ├── prisma/
-│   │   ├── schema.prisma          # Skema database (Kamar, Penghuni, Pembayaran, User)
-│   │   └── seed.ts                # Seed data dummy (40 kamar, penghuni, pembayaran)
+│   │   ├── schema.prisma          # Database schema (Kamar, Penghuni, Pembayaran, User)
+│   │   └── seed.ts                # Seeder data dummy awal
 │   └── src/
 │       ├── index.ts               # Entry point Express server
-│       ├── routes/                 # API routes (auth, kamar, penghuni, pembayaran)
-│       └── middleware/             # Auth middleware (JWT)
+│       ├── routes/                 # API Endpoints (auth, kamar, penghuni, pembayaran)
+│       └── middleware/             # Middleware otentikasi & validasi
 │
 ├── frontend/
 │   ├── public/
-│   │   ├── Logo-Kost.png          # Logo asli (landscape)
-│   │   ├── Logo-Kost-Square.png   # Logo kotak untuk ikon PWA
-│   │   └── manifest.json          # Konfigurasi PWA
+│   │   ├── Logo-Kost.png          # Logo utama
+│   │   ├── Logo-Kost-Square.png   # Ikon PWA (Kotak)
+│   │   └── manifest.json          # Konfigurasi PWA Manifest
 │   └── src/
 │       ├── app/
-│       │   ├── layout.tsx         # Root layout (Sidebar, ThemeProvider, PWA)
-│       │   ├── page.tsx           # Dashboard
-│       │   ├── login/page.tsx     # Halaman login
-│       │   ├── kamar/             # Halaman & detail kamar
-│       │   ├── penghuni/          # Halaman & detail penghuni
-│       │   ├── pembayaran/        # Halaman & detail pembayaran
-│       │   └── profile/           # Profil & ganti sandi
+│       │   ├── layout.tsx         # Root Layout (Sidebar, ThemeProvider, Toast)
+│       │   ├── page.tsx           # Halaman Dashboard utama
+│       │   ├── login/page.tsx     # Halaman Login Admin
+│       │   ├── kamar/             # Halaman daftar & detail kamar
+│       │   ├── penghuni/          # Halaman daftar & detail penghuni
+│       │   ├── pembayaran/        # Halaman daftar & detail pembayaran
+│       │   └── profile/           # Halaman profil admin & ubah password
 │       ├── components/
-│       │   ├── ui/                # Komponen Shadcn UI + HouseLoader + WelcomeScreen
-│       │   ├── layout/            # Sidebar & Navbar
-│       │   ├── dashboard/         # StatCard
+│       │   ├── ui/                # Komponen Shadcn UI & Loader Custom
+│       │   ├── layout/            # Sidebar, Navbar, Mobile Navigation
+│       │   ├── dashboard/         # StatCard & Widget Dashboard
 │       │   ├── kamar/             # KamarTable, KamarForm, KamarBadge
 │       │   ├── penghuni/          # PenghuniTable, PenghuniForm, PenghuniCard
 │       │   └── pembayaran/        # PembayaranTable, PembayaranForm, StatusBadge
 │       ├── hooks/
-│       │   ├── useKamar.ts        # CRUD kamar via API
-│       │   ├── usePenghuni.ts     # CRUD penghuni via API
-│       │   └── usePembayaran.ts   # CRUD pembayaran via API
+│       │   ├── useKamar.ts        # Hook manajemen data & state kamar
+│       │   ├── usePenghuni.ts     # Hook manajemen data & state penghuni
+│       │   └── usePembayaran.ts   # Hook manajemen data & state pembayaran
 │       ├── lib/
-│       │   └── utils.ts           # Helper: cn(), format tanggal, format rupiah
+│       │   └── utils.ts           # Helper utilities (cn, formatRupiah, formatDate)
 │       └── types/
-│           └── index.ts           # Definisi tipe & interface TypeScript
+│           └── index.ts           # Definisi interface TypeScript global
 ```
 
 ---
 
-## 🚀 Panduan Instalasi
+## 🚀 Panduan Instalasi & Jalankan Lokal
 
-### Prasyarat
-- **Node.js** versi 18+
-- **Git** terpasang di sistem
-- **Database PostgreSQL** (disarankan menggunakan [Supabase](https://supabase.com))
+### Prasyarat System
+- **Node.js** (v18.x atau lebih baru)
+- **npm** atau **pnpm** / **yarn**
+- Database **PostgreSQL** (Lokal atau Cloud Supabase)
 
-### 1. Kloning Repositori
-
+### 1️⃣ Clone Repositori
 ```bash
 git clone https://github.com/moch-firmansyahh/manajemen-kost-v2.git
 cd manajemen-kost-v2
 ```
 
-### 2. Setup Backend
-
+### 2️⃣ Configuration & Setup Backend
 ```bash
 cd backend
 npm install
 ```
-
-Buat file `.env` di folder `backend/` dengan isi:
-
+Buat file `.env` di dalam directory `backend/`:
 ```env
-DATABASE_URL="postgresql://user:password@host:port/database?schema=public"
+DATABASE_URL="postgresql://username:password@localhost:5432/db_manajemen_kost?schema=public"
 PORT=5000
 JWT_SECRET="rahasia_kost_pak_iman"
 ```
-
-Jalankan migrasi & seed database:
-
+Jalankan migrasi database dan seeding data dummy:
 ```bash
 npx prisma db push
 npx prisma db seed
 ```
-
-Jalankan server backend:
-
+Jalankan dev server backend:
 ```bash
 npm run dev
 ```
 
-### 3. Setup Frontend
-
-Buka terminal baru:
-
+### 3️⃣ Setup & Jalankan Frontend
+Buka terminal baru pada root project:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
-Akses aplikasi di browser: **[http://localhost:3000](http://localhost:3000)**
+Akses aplikasi web di browser pada link: **[http://localhost:3000](http://localhost:3000)**
 
 ---
 
-## 🔑 Kredensial Login
+## 🔑 Kredensial Akses Demo
 
-| Field | Nilai |
+Anda dapat menggunakan akun administrator berikut untuk mencoba aplikasi:
+
+| Parameter | Kredensial |
 |---|---|
-| **Email** | `firmanajah366@gmail.com` |
+| **Email Login** | `firmanajah366@gmail.com` |
 | **Password** | `Iman12345` |
 
 ---
 
 ## 📱 Progressive Web App (PWA)
 
-Aplikasi ini mendukung instalasi langsung di HP tanpa melalui App Store:
+Aplikasi telah terkonfigurasi PWA sehingga dapat di-install secara langsung di smartphone Android & iOS:
 
-1. Buka website di browser HP (Chrome / Safari)
-2. Ketuk menu **⋮** → **"Add to Home Screen"** (Android) atau **Share** → **"Add to Home Screen"** (iOS)
-3. Aplikasi akan terpasang di layar utama dengan tampilan fullscreen tanpa URL bar
+1. Buka link **[manajemen-kost-nine.vercel.app](https://manajemen-kost-nine.vercel.app)** di browser HP.
+2. **Android (Chrome)**: Ketuk titik tiga `⋮` di pojok kanan atas ➔ Pilih **"Add to Home screen"** / **"Install App"**.
+3. **iOS (Safari)**: Ketuk tombol **Share** ➔ Pilih **"Add to Home Screen"**.
+4. Aplikasi akan tampil layaknya aplikasi native tanpa bar browser URL.
 
 ---
 
-## 🏗️ Build Produksi
+## 🏗️ Build & Verifikasi Produksi
+
+Untuk memastikan tidak ada TypeScript error dan melakukan build bundle produksi:
 
 ```bash
 cd frontend
 npm run build
 ```
 
-> Proyek dikonfigurasi dengan pemeriksaan tipe TypeScript ketat dan dijamin lulus kompilasi 100% tanpa error.
+> 🟢 Codebase dikonfigurasi dengan standar ketat TypeScript & ESLint, menjamin kompilasi sukses 100% tanpa error.
 
 ---
 
 <div align="center">
 
-**Kontrakan Pa Iman** © 2026 · Tugas Besar CCI Frontend Web Development
+**Kontrakan Pa Iman** © 2026 · *Dikembangkan untuk Tugas Besar CCI Frontend Web Development*
 
 </div>
