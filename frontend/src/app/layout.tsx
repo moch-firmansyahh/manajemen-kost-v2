@@ -7,13 +7,49 @@ import { MainLayoutClient } from "@/components/layout/MainLayoutClient";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kontrakan Pa Iman",
-  description: "Aplikasi manajemen kost berbasis web untuk pemilik kost.",
+  metadataBase: new URL("https://manajemen-kost-nine.vercel.app"),
+  title: {
+    default: "Kontrakan Pa Iman - Sistem Manajemen Kost Digital",
+    template: "%s | Kontrakan Pa Iman",
+  },
+  description:
+    "Aplikasi sistem manajemen kost digital modern & responsif untuk pemilik kost dalam mengelola unit kamar, data penghuni, dan pembayaran bulanan.",
+  keywords: [
+    "manajemen kost",
+    "kontrakan pa iman",
+    "sistem kost",
+    "aplikasi kost",
+    "kost digital",
+  ],
+  authors: [{ name: "Moch Firmansyah" }],
+  creator: "Moch Firmansyah",
+  icons: {
+    icon: "/Logo-Kost-Square.png",
+    shortcut: "/Logo-Kost-Square.png",
+    apple: "/Logo-Kost-Square.png",
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Kost Pa Iman",
+  },
+  openGraph: {
+    title: "Kontrakan Pa Iman - Sistem Manajemen Kost Digital",
+    description:
+      "Aplikasi sistem manajemen kost digital modern & responsif untuk pemilik kost.",
+    url: "https://manajemen-kost-nine.vercel.app",
+    siteName: "Kontrakan Pa Iman",
+    images: [
+      {
+        url: "/Logo-Kost.png",
+        width: 800,
+        height: 600,
+        alt: "Logo Kontrakan Pa Iman",
+      },
+    ],
+    locale: "id_ID",
+    type: "website",
   },
 };
 
